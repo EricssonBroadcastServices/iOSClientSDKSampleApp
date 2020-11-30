@@ -142,7 +142,7 @@ class AssetDetailsViewController: UITableViewController, EnigmaDownloadManager {
                 }
                 
                 // Developers can use ExposureDownloadTask delete option to delete an already downloaded asset
-                self.enigmaDownloadManager.removeDownloadedAsset(assetId: self.assetId, sessionToken: session, environment: environment)
+                self.enigmaDownloadManager.removeDownloadedAsset(assetId: self.assetId)
                 self.downloadState = .notDownloaded
                 
                 self.refreshTableView()
@@ -279,7 +279,7 @@ class AssetDetailsViewController: UITableViewController, EnigmaDownloadManager {
                 (alert: UIAlertAction!) -> Void in
                 
                 // Developers can use ExposureDownloadTask delete option to delete an already downloaded asset
-                self.enigmaDownloadManager.removeDownloadedAsset(assetId: self.assetId, sessionToken: session, environment: environment)
+                self.enigmaDownloadManager.removeDownloadedAsset(assetId: self.assetId)
                 self.refreshTableView()
                 
             })

@@ -36,7 +36,7 @@ class DownloadListTableViewController: UITableViewController, EnigmaDownloadMana
         // If you want to fetch all the downloaded Media , regardless of the user you can use `enigmaDownloadManager.getDownloadedAssets()`
         
         // This will fetch all the downloaded media related to the current user
-        downloadedAssets = enigmaDownloadManager.getDownloadedAssets(accountId: session.accountId)
+        downloadedAssets = enigmaDownloadManager.getDownloadedAssets()
         
         // This will fetch all the downloaded media related to the current user from the exposure backend
         /* GetAllDownloads(environment: environment, sessionToken: session )
@@ -103,7 +103,7 @@ class DownloadListTableViewController: UITableViewController, EnigmaDownloadMana
                 }
                 
                 // Developers can use ExposureDownloadTask removeDownloadedAsset option to delete an already downloaded asset
-                self.enigmaDownloadManager.removeDownloadedAsset(assetId: asset.assetId, sessionToken:session, environment: environment )
+                self.enigmaDownloadManager.removeDownloadedAsset(assetId: asset.assetId)
                 self.refreshTableView()
             }
         })
@@ -120,11 +120,11 @@ class DownloadListTableViewController: UITableViewController, EnigmaDownloadMana
                 
                 // Developers can use the same download task to refresh the licence if it has expired.
                 let task = self.enigmaDownloadManager.download(assetId: asset.assetId, using: session, in: environment)
-                task.renewLicence()
+                task.refreshLicence()
                 task.onError {_, url, error in
                     print("📱 RefreshLicence Task failed with an error: \(error)",url ?? "")
                 }
-                .onLicenceRenewed { _, url in
+                .onCompleted { _, url in
                     print("📱 RefreshLicence Task completed: \(url)")
                 }
             }
