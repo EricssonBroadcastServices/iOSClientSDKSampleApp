@@ -63,7 +63,7 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     
     var castChannel: Channel = Channel()
     var castSession: GCKCastSession?
-    
+
     private var pictureInPictureController: AVPictureInPictureController?
     
     override func loadView() {
@@ -89,7 +89,7 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
         // Google Cast
         self.showChromecastButton() // Show cast button in the navigation menu
         GCKCastContext.sharedInstance().sessionManager.add(self)
-        showCastButtonInPlayer() // Hide player controls & Show cast button if there is any active cast session 
+        showCastButtonInPlayer() // Hide player controls & Show cast button if there is any active cast session
     }
     
     override func didMove(toParent parent: UIViewController?) {
@@ -279,7 +279,7 @@ extension PlayerViewController {
                 
                 
                 if GCKCastContext.sharedInstance().sessionManager.hasConnectedCastSession() {
-                    self.chromecast(playable: playable, in: environment, sessionToken: sessionToken)
+                    self.chromecast(playable: playable, in: environment, sessionToken: sessionToken, currentplayheadTime: self.player.playheadTime)
                 } else {
                     
                     vodBasedTimeline.isHidden = true
@@ -629,7 +629,6 @@ extension PlayerViewController {
     
     func showCastButtonInPlayer() {
         if GCKCastContext.sharedInstance().sessionManager.hasConnectedCastSession() {
-            
             programBasedTimeline.isHidden = true
             vodBasedTimeline.isHidden = true
             pausePlayButton.isHidden = true
@@ -675,6 +674,16 @@ extension PlayerViewController {
 // MARK: - Chrome cast
 extension PlayerViewController: GCKSessionManagerListener {
     
+    func sessionManager(_: GCKSessionManager, didResumeSession session: GCKSession) {
+        print("sessionManager didResumeSession \(session)")
+      }
+    
+    func sessionManager(_: GCKSessionManager, didFailToStartSessionWithError error: Error?) {
+        if let error = error {
+          print( "Failed to start a session", error.localizedDescription)
+        }
+        
+      }
     
     func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKSession) {
         sessionManager.remove(self)
@@ -685,74 +694,67 @@ extension PlayerViewController: GCKSessionManagerListener {
             .compactMap{ $0 as? ExposureAnalytics }
             .forEach{ $0.startedCasting() }
         
+        let currentplayheadTime = self.player.playheadTime
         player.stop()
-        
+
         showCastButtonInPlayer()
         
         guard let env = environment, let token = sessionToken , let playable = nowPlaying else { return }
-        self.chromecast(playable: playable, in: env, sessionToken: token)
+        self.chromecast(playable: playable, in: env, sessionToken: token, currentplayheadTime : currentplayheadTime)
+    }
+    
+    // MARK: - GCKRequestDelegate
+      func requestDidComplete(_ request: GCKRequest) {
+        print("request \(Int(request.requestID)) completed")
+      }
+
+      func request(_ request: GCKRequest, didFailWithError error: GCKError) {
+        print("request \(Int(request.requestID)) failed with error \(error)")
+      }
+    
+    func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKSession, withError error: Error?) {
+        if error == nil {
+            print("GCKSessionManagerListener Session ended")
+            showCastButtonInPlayer()
+        } else {
+            print("GCKSessionManagerListener Session ended unexpectedly:\n \(error?.localizedDescription ?? "")")
+        }
     }
     
     
-    func chromecast(playable: Playable, in environment: Exposure.Environment, sessionToken: SessionToken, localOffset: Int64? = nil, localTime: Int64? = nil) {
+    func chromecast(playable: Playable, in environment: Exposure.Environment, sessionToken: SessionToken, localOffset: Int64? = nil, localTime: Int64? = nil, currentplayheadTime : Int64?) {
         guard let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession else { return }
         
-        let customData = configure(for: playable, environment: environment, sessionToken: sessionToken, localOffset: localOffset, localTime: localTime)
+        let customData = CustomData(customer: environment.customer, businessUnit: environment.businessUnit).toJson
         
         let mediaInfoBuilder = GCKMediaInformationBuilder()
         mediaInfoBuilder.contentID = playable.assetId
-        mediaInfoBuilder.streamType = .none
-        mediaInfoBuilder.contentType = "video/mp4"
-        mediaInfoBuilder.metadata = nil
-        mediaInfoBuilder.streamDuration = 0
-        mediaInfoBuilder.mediaTracks = nil
         mediaInfoBuilder.textTrackStyle = .createDefault()
         
         let mediaInfo = mediaInfoBuilder.build()
         
-        let mediaLoadOptions = GCKMediaLoadOptions()
-        mediaLoadOptions.customData = customData.toJson
-        
-        print(customData.toJson)
-        
-        session
-            .remoteMediaClient?
-            .loadMedia(mediaInfo, with: mediaLoadOptions)
-    }
+        if let remoteMediaClient = session.remoteMediaClient {
+            
+            let mediaQueueItemBuilder = GCKMediaQueueItemBuilder()
+            mediaQueueItemBuilder.mediaInformation = mediaInfo
+            let mediaQueueItem = mediaQueueItemBuilder.build()
+            let queueDataBuilder = GCKMediaQueueDataBuilder(queueType: .generic)
+            queueDataBuilder.items = [mediaQueueItem]
+            queueDataBuilder.repeatMode = remoteMediaClient.mediaStatus?.queueRepeatMode ?? .off
+            
     
-    private func configure(for playable: Playable, environment: Exposure.Environment, sessionToken: SessionToken, localOffset: Int64?, localTime: Int64?) -> Cast.CustomData {
-        let properties = castPlaybackProperties(localOffset: localOffset, localTime: localTime)
-        let castEnvironment = Cast.CastEnvironment(baseUrl: environment.baseUrl,
-                                                   customer: environment.customer,
-                                                   businessUnit: environment.businessUnit,
-                                                   sessionToken: sessionToken.value)
-        return CustomData(environment: castEnvironment,
-                          assetId: playable.assetId,
-                          language: "fr", playbackProperties: properties)
-        
-    }
+
+            let mediaLoadRequestDataBuilder = GCKMediaLoadRequestDataBuilder()
+            mediaLoadRequestDataBuilder.credentials = "\(sessionToken.value)"
+            mediaLoadRequestDataBuilder.queueData = queueDataBuilder.build()
+            mediaLoadRequestDataBuilder.customData = customData
+            
+//            if let playheadTime = currentplayheadTime {
+//                mediaLoadRequestDataBuilder.startTime = TimeInterval(playheadTime/1000)
+//            }
+            let _ = remoteMediaClient.loadMedia(with: mediaLoadRequestDataBuilder.build())
+
+        }
     
-    private func castPlaybackProperties(localOffset: Int64?, localTime: Int64?) -> Cast.CustomData.PlaybackProperties {
-        if let localOffset = localOffset {
-            return Cast.CustomData.PlaybackProperties(playFrom: "startOffset", startOffset: localOffset)
-        }
-        else if let localTime = localTime {
-            return Cast.CustomData.PlaybackProperties(playFrom: "startTime", startTime: localTime)
-        }
-        else {
-            return Cast.CustomData.PlaybackProperties(playFrom: "bookmark")
-        }
-    }
-    
-    private func localTime(playable: Playable) -> (Int64?, Int64?) {
-        if playable is ChannelPlayable || playable is ProgramPlayable {
-            return (nil, player.playheadTime)
-        }
-        else if playable is AssetPlayable {
-            return (player.playheadPosition, nil)
-        }
-        return (nil, nil)
     }
 }
-
-

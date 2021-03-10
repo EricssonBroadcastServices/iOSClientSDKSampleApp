@@ -80,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GCKRemoteMediaClientListe
         
     }
     
-    func hookChromecastListener() {
+    /* func hookChromecastListener() {
         
         guard let session = GCKCastContext.sharedInstance().sessionManager.currentCastSession else { return }
         
@@ -197,7 +197,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GCKRemoteMediaClientListe
         }
         
         castChannel.pull()
-    }
+    } */
     
     @objc func presentExpandedMediaControls() {
         print("present expanded media controls")
@@ -222,27 +222,27 @@ extension AppDelegate: GCKLoggerDelegate {
 }
 
 // MARK: - GCKSessionManagerListener
-extension AppDelegate {
-    func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
-        hookChromecastListener()
-    }
-    
-    func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKCastSession) {
-        hookChromecastListener()
-    }
-    
-    func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKSession, withError error: Error?) {
-        if error == nil {
-            print("GCKSessionManagerListener Session ended")
-        } else {
-            print("GCKSessionManagerListener Session ended unexpectedly:\n \(error?.localizedDescription ?? "")")
-        }
-    }
-    
-    func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKSession, withError error: Error) {
-        print("GCKSessionManagerListener Failed to start session:\n\(error.localizedDescription)")
-    }
-}
+//extension AppDelegate {
+//    func sessionManager(_ sessionManager: GCKSessionManager, didResumeCastSession session: GCKCastSession) {
+//        // hookChromecastListener()
+//    }
+//
+//    func sessionManager(_ sessionManager: GCKSessionManager, didStart session: GCKCastSession) {
+//        // hookChromecastListener()
+//    }
+//
+//    func sessionManager(_ sessionManager: GCKSessionManager, didEnd session: GCKSession, withError error: Error?) {
+//        if error == nil {
+//            print("GCKSessionManagerListener Session ended")
+//        } else {
+//            print("GCKSessionManagerListener Session ended unexpectedly:\n \(error?.localizedDescription ?? "")")
+//        }
+//    }
+//
+//    func sessionManager(_ sessionManager: GCKSessionManager, didFailToStart session: GCKSession, withError error: Error) {
+//        print("GCKSessionManagerListener Failed to start session:\n\(error.localizedDescription)")
+//    }
+//}
 
 class ChromeCastButton: UIButton {
     var triggerAction: () -> Void = { }
@@ -278,7 +278,7 @@ extension AppDelegate {
         }
     }
     
-    private func log(downloadTask: AVAssetDownloadTask) {
+    private func log(downloadTask: AVAggregateAssetDownloadTask) {
         print(" Download task state " , downloadTask )
     }
 }
