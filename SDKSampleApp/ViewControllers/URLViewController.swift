@@ -7,13 +7,17 @@
 
 import Foundation
 import iOSClientExposurePlayback
+import iOSClientPlayer
 import UIKit
 
 class URLViewController: UIViewController {
+    
     lazy var urlTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Enter URL"
-        textField.text = "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8"
+        
+        textField.text = "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
+        // textField.text = "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8"
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -54,23 +58,19 @@ class URLViewController: UIViewController {
         else {
             return
         }
-        
-        let urlPlayable = URLPlayable(url: url)
-        handlePlay(playable: urlPlayable)
+        self.handlePlay(url: url)
     }
     
-    func handlePlay(playable: Playable) {
+    func handlePlay(url: URL) {
+        
         let destinationViewController = PlayerViewController()
-        destinationViewController.playable = playable
+
+        destinationViewController.urlPlayableUrl = url
+        destinationViewController.shouldPlayWithUrl = true
+        
         destinationViewController.environment = StorageProvider.storedEnvironment
         destinationViewController.sessionToken = StorageProvider.storedSessionToken
-        
-        let properties = PlaybackProperties(
-            autoplay: true,
-            playFrom: .defaultBehaviour
-        )
-        destinationViewController.playbackProperties = properties
-        
+ 
         self.navigationController?.pushViewController(destinationViewController, animated: false)
     }
 }

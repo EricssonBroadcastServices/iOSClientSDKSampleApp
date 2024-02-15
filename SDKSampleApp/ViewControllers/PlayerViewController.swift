@@ -29,6 +29,14 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     
     let audioSession = AVAudioSession.sharedInstance()
     var offlineMediaPlayable: OfflineMediaPlayable?
+    
+    // Play via direct URL
+    fileprivate var urlPlayablePlayer: Player<HLSNative<ManifestContext>>!
+    let urlPlayableTech = HLSNative<ManifestContext>()
+    let urlPlayableContext = ManifestContext()
+    var urlPlayableUrl: URL?
+    var shouldPlayWithUrl: Bool = false
+    
     var playbackProperties = PlaybackProperties()
     fileprivate(set) var player: Player<HLSNative<ExposureContext>>!
     
@@ -86,7 +94,9 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     override func loadView() {
         super.loadView()
         setUpLayout()
-        setupPlayerControls()
+        
+        
+        if !shouldPlayWithUrl {setupPlayerControls()}
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -107,7 +117,12 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
         view.addGestureRecognizer(tapGesture)
         view.bindToKeyboard()
         
-        setupPlayer(environment, sessionToken)
+        if shouldPlayWithUrl {
+            setupURLPlayablePlayer()
+        } else {
+            setupPlayer(environment, sessionToken)
+        }
+        
         self.enableAudioSeesionForPlayer()
         
         // Google Cast
@@ -133,23 +148,48 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     }
 }
 
+
+// MARK: - Setup URLPlayable Player
+extension PlayerViewController {
+    fileprivate func setupURLPlayablePlayer() {
+    
+        urlPlayablePlayer = Player(tech: urlPlayableTech, context: urlPlayableContext)
+        let _ = urlPlayablePlayer.configure(playerView: playerView)
+       
+        // Note:
+        // To set up the ExposureContext Based Player ( RedBee Player : Create specific Environment CU / BU / Session etc  ) users must pass environment & a session.
+        // Then We can create a URLPlayable & use the same exposure context based player.
+        player = Player(environment: environment, sessionToken: sessionToken)
+        self.startPlayBack(properties: playbackProperties)
+        
+        
+        // But in my opinion , playing via url should not force users to pass env or a session. In that case we should directly call the Player<HLSNative<ManifestContext>>.stream(url: _ )
+        //
+        
+        /*
+            // Play without ExposureContext Based player
+            if let urlPlayableUrl = urlPlayableUrl {
+                urlPlayablePlayer.stream(url: urlPlayableUrl)
+                urlPlayablePlayer.play()
+            }
+         */
+    }
+}
+
 // MARK: - Setup Player
 extension PlayerViewController: AVPlayerViewControllerDelegate {
         
     fileprivate func setupPlayer(_ environment: Environment, _ sessionToken: SessionToken) {
-        /// This will configure the player with the `SessionToken` acquired in the specified `Environment`
-    
         
+        /// This will configure the player with the `SessionToken` acquired in the specified `Environment`
         player = Player(environment: environment, sessionToken: sessionToken)
+        
         let avPlayerLayer = player.configure(playerView: playerView)
-
-
         pictureInPictureController = AVPictureInPictureController(playerLayer: avPlayerLayer)
         pictureInPictureController?.delegate = self
         if #available(iOS 14.2, *) {
             pictureInPictureController?.canStartPictureInPictureAutomaticallyFromInline = true
         }
-
         
         // The preparation and loading process can be followed by listening to associated events.
         player
@@ -527,31 +567,59 @@ extension PlayerViewController: AVPlayerViewControllerDelegate {
     func startPlayBack(properties: PlaybackProperties = PlaybackProperties() ) {
         
         nowPlaying = playable
-
-        if let offlineMediaPlayable = offlineMediaPlayable {
+        
+        // If should only use the url to play , use the PlayerWithManifestContext
+        if let urlPlayableUrl = urlPlayableUrl {
+            player.startPlayback(urlPlayable: URLPlayable(url: urlPlayableUrl, player: urlPlayablePlayer) )
             
-            isOfflineMedia = true
-            player.startPlayback(offlineMediaPlayable: offlineMediaPlayable )
+            // Play the url stream
+            urlPlayablePlayer.play()
+            
+            // Playback events
+            urlPlayablePlayer
+                .onPlaybackCreated { tech, source in
+                    print(" Playback created ")
+                }
+                .onPlaybackPrepared { tech, source in
+                    print(" Playback Prepared  ")
+                }
+                .onPlaybackReady { tech, source in
+                    print(" Playback Ready ")
+                }
+                .onPlaybackAborted { tech, source in
+                    print(" Playback Aborted")
+                }
+                .onError { tech, source, readyError in
+                    print(" Playback Error " , readyError )
+            }
+        
+            
         } else {
-            if let playable = playable {
+            if let offlineMediaPlayable = offlineMediaPlayable {
                 
-                isOfflineMedia = false
+                isOfflineMedia = true
+                player.startPlayback(offlineMediaPlayable: offlineMediaPlayable )
                 
-                // Check for cast session
-                if GCKCastContext.sharedInstance().sessionManager.hasConnectedCastSession() {
-                    self.chromecast(playable: playable, in: environment, sessionToken: sessionToken, currentplayheadTime: self.player.playheadTime)
-                } else {
-    
-                    player.startPlayback(playable: playable, properties: properties)
+            } else {
+                if let playable = playable {
                     
+                    isOfflineMedia = false
+                    
+                    // Check for cast session
+                    if GCKCastContext.sharedInstance().sessionManager.hasConnectedCastSession() {
+                        self.chromecast(playable: playable, in: environment, sessionToken: sessionToken, currentplayheadTime: self.player.playheadTime)
+                    } else {
+        
+                        player.startPlayback(playable: playable, properties: properties)
+                        
+                    }
                 }
             }
+            
+            DispatchQueue.main.async {
+                self.updateTimeLine()
+            }
         }
-        
-        DispatchQueue.main.async {
-            self.updateTimeLine()
-        }
-        
     }
     
     
