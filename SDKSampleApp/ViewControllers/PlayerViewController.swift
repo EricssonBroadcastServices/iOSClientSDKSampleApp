@@ -97,7 +97,9 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
         setUpLayout()
         
         
-        if !shouldPlayWithUrl {setupPlayerControls()}
+        if !shouldPlayWithUrl {
+            setupPlayerControls()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -135,7 +137,11 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     override func viewDidDisappear(_ animated: Bool) {
         self.vodBasedTimeline.stopLoop()
         self.programBasedTimeline.stopLoop()
-        self.player.stop()
+        if !shouldPlayWithUrl {
+            self.player.stop()
+        } else {
+            self.urlPlayablePlayer.stop()
+        }
         self.resumeBackgroundAudio()
         
     }
