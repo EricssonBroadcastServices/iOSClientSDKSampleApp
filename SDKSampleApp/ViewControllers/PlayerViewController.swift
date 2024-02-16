@@ -34,9 +34,10 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     fileprivate var urlPlayablePlayer: Player<HLSNative<ManifestContext>>!
     let urlPlayableTech = HLSNative<ManifestContext>()
     let urlPlayableContext = ManifestContext()
-    var urlPlayableUrl: URL?
+    var urlPlayable: URLPlayable?
     var shouldPlayWithUrl: Bool = false
     
+    // Play via Exposure with assetId
     var playbackProperties = PlaybackProperties()
     fileprivate(set) var player: Player<HLSNative<ExposureContext>>!
     
@@ -50,7 +51,7 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
         return stackView
     }()
     
-    let pausePlayButton: UIButton = {
+    lazy var pausePlayButton: UIButton = {
         let button = UIButton()
         button.tintColor = ColorState.active.button
         button.addTarget(self, action: #selector(actionPausePlay(_:)), for: .touchUpInside)
@@ -152,27 +153,13 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
 // MARK: - Setup URLPlayable Player
 extension PlayerViewController {
     fileprivate func setupURLPlayablePlayer() {
-    
         urlPlayablePlayer = Player(tech: urlPlayableTech, context: urlPlayableContext)
         let _ = urlPlayablePlayer.configure(playerView: playerView)
-       
-        // Note:
-        // To set up the ExposureContext Based Player ( RedBee Player : Create specific Environment CU / BU / Session etc  ) users must pass environment & a session.
-        // Then We can create a URLPlayable & use the same exposure context based player.
-        player = Player(environment: environment, sessionToken: sessionToken)
-        self.startPlayBack(properties: playbackProperties)
         
-        
-        // But in my opinion , playing via url should not force users to pass env or a session. In that case we should directly call the Player<HLSNative<ManifestContext>>.stream(url: _ )
-        //
-        
-        /*
-            // Play without ExposureContext Based player
-            if let urlPlayableUrl = urlPlayableUrl {
-                urlPlayablePlayer.stream(url: urlPlayableUrl)
-                urlPlayablePlayer.play()
-            }
-         */
+        if let urlPlayable {
+            urlPlayablePlayer.stream(urlPlayable: urlPlayable)
+            urlPlayablePlayer.play()
+        }
     }
 }
 
@@ -568,57 +555,29 @@ extension PlayerViewController: AVPlayerViewControllerDelegate {
         
         nowPlaying = playable
         
-        // If should only use the url to play , use the PlayerWithManifestContext
-        if let urlPlayableUrl = urlPlayableUrl {
-            player.startPlayback(urlPlayable: URLPlayable(url: urlPlayableUrl, player: urlPlayablePlayer) )
+        if let offlineMediaPlayable = offlineMediaPlayable {
             
-            // Play the url stream
-            urlPlayablePlayer.play()
-            
-            // Playback events
-            urlPlayablePlayer
-                .onPlaybackCreated { tech, source in
-                    print(" Playback created ")
-                }
-                .onPlaybackPrepared { tech, source in
-                    print(" Playback Prepared  ")
-                }
-                .onPlaybackReady { tech, source in
-                    print(" Playback Ready ")
-                }
-                .onPlaybackAborted { tech, source in
-                    print(" Playback Aborted")
-                }
-                .onError { tech, source, readyError in
-                    print(" Playback Error " , readyError )
-            }
-        
+            isOfflineMedia = true
+            player.startPlayback(offlineMediaPlayable: offlineMediaPlayable )
             
         } else {
-            if let offlineMediaPlayable = offlineMediaPlayable {
+            if let playable = playable {
                 
-                isOfflineMedia = true
-                player.startPlayback(offlineMediaPlayable: offlineMediaPlayable )
+                isOfflineMedia = false
                 
-            } else {
-                if let playable = playable {
+                // Check for cast session
+                if GCKCastContext.sharedInstance().sessionManager.hasConnectedCastSession() {
+                    self.chromecast(playable: playable, in: environment, sessionToken: sessionToken, currentplayheadTime: self.player.playheadTime)
+                } else {
                     
-                    isOfflineMedia = false
+                    player.startPlayback(playable: playable, properties: properties)
                     
-                    // Check for cast session
-                    if GCKCastContext.sharedInstance().sessionManager.hasConnectedCastSession() {
-                        self.chromecast(playable: playable, in: environment, sessionToken: sessionToken, currentplayheadTime: self.player.playheadTime)
-                    } else {
-        
-                        player.startPlayback(playable: playable, properties: properties)
-                        
-                    }
                 }
             }
-            
-            DispatchQueue.main.async {
-                self.updateTimeLine()
-            }
+        }
+        
+        DispatchQueue.main.async {
+            self.updateTimeLine()
         }
     }
     
