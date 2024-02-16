@@ -149,7 +149,6 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
     }
 }
 
-
 // MARK: - Setup URLPlayable Player
 extension PlayerViewController {
     fileprivate func setupURLPlayablePlayer() {
@@ -157,7 +156,7 @@ extension PlayerViewController {
         let _ = urlPlayablePlayer.configure(playerView: playerView)
         
         if let urlPlayable {
-            urlPlayablePlayer.stream(urlPlayable: urlPlayable)
+            urlPlayablePlayer.stream(url: urlPlayable.url)
             urlPlayablePlayer.play()
         }
     }

@@ -15,9 +15,7 @@ class URLViewController: UIViewController {
     lazy var urlTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Enter URL"
-        
-        textField.text = "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
-        // textField.text = "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8"
+        textField.text = "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8"
         textField.borderStyle = .roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
@@ -62,15 +60,14 @@ class URLViewController: UIViewController {
     }
     
     func handlePlay(url: URL) {
-        
-        let destinationViewController = PlayerViewController()
+        let playerViewController = PlayerViewController()
 
-        destinationViewController.urlPlayableUrl = url
-        destinationViewController.shouldPlayWithUrl = true
+        playerViewController.urlPlayable = URLPlayable(url: url)
+        playerViewController.shouldPlayWithUrl = true
         
-        destinationViewController.environment = StorageProvider.storedEnvironment
-        destinationViewController.sessionToken = StorageProvider.storedSessionToken
+        playerViewController.environment = StorageProvider.storedEnvironment
+        playerViewController.sessionToken = StorageProvider.storedSessionToken
  
-        self.navigationController?.pushViewController(destinationViewController, animated: false)
+        self.navigationController?.pushViewController(playerViewController, animated: false)
     }
 }
