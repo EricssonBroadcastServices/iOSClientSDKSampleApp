@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37224BBC2B909D320005FCBE /* QRScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37224BBB2B909D320005FCBE /* QRScannerViewController.swift */; };
 		68A974842A013BC500A68431 /* LNPopupController-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 68A974832A013BC500A68431 /* LNPopupController-Static */; };
 		68DED0822AD8145700FA50BF /* iOSClientExposurePlayback in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0812AD8145700FA50BF /* iOSClientExposurePlayback */; };
 		68DED0852AD8147500FA50BF /* iOSClientExposureDownload in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0842AD8147500FA50BF /* iOSClientExposureDownload */; };
@@ -152,6 +153,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		37224BBB2B909D320005FCBE /* QRScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewController.swift; sourceTree = "<group>"; };
 		68DED0862AD8169000FA50BF /* AssetListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListCell.swift; sourceTree = "<group>"; };
 		780B2DEF251B6B4C003B2A94 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		780B2E03251B6B4C003B2A94 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -279,6 +281,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		37224BBA2B909D190005FCBE /* QRCodeReader */ = {
+			isa = PBXGroup;
+			children = (
+				37224BBB2B909D320005FCBE /* QRScannerViewController.swift */,
+			);
+			path = QRCodeReader;
+			sourceTree = "<group>";
+		};
 		7825E6EE276339F400DC4FA7 /* Push Next Content */ = {
 			isa = PBXGroup;
 			children = (
@@ -405,6 +415,7 @@
 		78C2510225139E1B001ED9E3 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				37224BBA2B909D190005FCBE /* QRCodeReader */,
 				78C2510325139E3C001ED9E3 /* Theme */,
 				78C2510A25139ED1001ED9E3 /* StorageProvider.swift */,
 				781C373F25187CA60094C2C6 /* UIViewController+Extension.swift */,
@@ -813,6 +824,7 @@
 				78C2516D2513A0A3001ED9E3 /* Int+timeFormat.swift in Sources */,
 				68DED0872AD8169000FA50BF /* AssetListCell.swift in Sources */,
 				781C3873251A1AF70094C2C6 /* RootViewController.swift in Sources */,
+				37224BBC2B909D320005FCBE /* QRScannerViewController.swift in Sources */,
 				78C250FD25139E09001ED9E3 /* MainNavigationController.swift in Sources */,
 				78F6D49D279163A700D2B5B2 /* StickyPlayerViewController.swift in Sources */,
 				78C2512F25139F82001ED9E3 /* TrackSelectionViewController.swift in Sources */,
@@ -1142,12 +1154,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SDKSampleApp/SDKSampleApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 18;
-				DEVELOPMENT_TEAM = 3P5CH3HLZN;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3P5CH3HLZN;
+				DEVELOPMENT_TEAM = VR5R3A8UNS;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1166,10 +1176,9 @@
 					"$(inherited)",
 				);
 				OTHER_LIBTOOLFLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleAppRdk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.emp.ExposurePlayback.SampleApp";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.emp.ExposurePlayback.SampleApp";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1181,12 +1190,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SDKSampleApp/SDKSampleApp.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 18;
-				DEVELOPMENT_TEAM = 3P5CH3HLZN;
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 3P5CH3HLZN;
+				DEVELOPMENT_TEAM = VR5R3A8UNS;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1204,10 +1211,9 @@
 					"$(inherited)",
 				);
 				OTHER_LIBTOOLFLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleAppRdk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.emp.ExposurePlayback.SampleApp";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.emp.ExposurePlayback.SampleApp";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
