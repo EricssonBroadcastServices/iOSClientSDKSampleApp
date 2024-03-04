@@ -3,6 +3,7 @@ import UIKit
 import iOSClientExposure
 import AVFoundation
 import GoogleCast
+import iOSClientExposurePlayback
 
 class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
@@ -91,6 +92,8 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
             session.startRunning()
             isScanning = true
         }
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -151,11 +154,46 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         StorageProvider.store(environment: environment)
         
         
+//        let navigationController = MainNavigationController()
+//        let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
+//          as GCKUICastContainerViewController
+//        castContainerVC.miniMediaControlsItemEnabled = true
+//        UIApplication.shared.keyWindow?.rootViewController = castContainerVC
+        
+        showPlayerController(
+            assetID: "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E",
+            environment: environment
+        )
+    }
+    // b74e3719-3ef0-481a-8014-40fa7cea2402_82162E
+    private func showPlayerController(
+        assetID: String,
+        environment: Environment
+    ) {
+//        let playerVC = PlayerViewController()
+//        
+//        playerVC.environment = environment
+//        playerVC.sessionToken = StorageProvider.storedSessionToken //  rdk this should be optional - if not provided then crash
+//        
+//        let properties = PlaybackProperties(
+//            autoplay: true,
+//            playFrom: .bookmark
+//        )
+//        
+//        playerVC.playbackProperties = properties
+//        playerVC.playable = AssetPlayable(assetId: assetID)
+//        
+//        print("RDK show")
+//        viewControllers.append(playerVC)
+        print("RDK pop to root")
+//        self.navigationController?.popToRootViewController(animated: false)
+//        self.navigationController?.viewWillAppear(false)
         let navigationController = MainNavigationController()
         let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
           as GCKUICastContainerViewController
         castContainerVC.miniMediaControlsItemEnabled = true
         UIApplication.shared.keyWindow?.rootViewController = castContainerVC
+//        self.navigationController?.pushViewController(playerVC, animated: true)
     }
 
 }

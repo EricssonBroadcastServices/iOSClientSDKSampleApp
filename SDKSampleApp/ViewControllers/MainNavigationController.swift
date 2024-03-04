@@ -37,34 +37,60 @@ class MainNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("RDK viewDidLoad")
+        
         if StorageProvider.storedSessionToken != nil {
             showRootController()
         } else {
             showEnvironmentController()
         }
         
-        guard 
-            let environment = StorageProvider.storedEnvironment
-        else {
-            return
-        }
-        
-        if let assetID {
-            showPlayerController(
-                assetID: assetID,
-                environment: environment
-            )
-        }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("RDK viewWillAppear")
+        
+            guard
+                let environment = StorageProvider.storedEnvironment
+            else {
+                print("RDK guard return")
+                return
+            }
+    
+            if let assetID {
+                print("RDK showPlayerController")
+                showPlayerController(
+                    assetID: assetID,
+                    environment: environment
+                )
+            }
+    }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        guard
+//            let environment = StorageProvider.storedEnvironment
+//        else {
+//            return
+//        }
+//        
+//        if let assetID {
+//            showPlayerController(
+//                assetID: assetID,
+//                environment: environment
+//            )
+//        }
+//    }
     
     /// Show Root (main) view if user not logged in
     private func showRootController() {
-        viewControllers = [RootViewController()]
+        let vc = RootViewController()
+        viewControllers = [vc]
     }
     
     /// Show Enviornment view if user not logged in
     private func showEnvironmentController() {
-        viewControllers = [EnvironmentViewController()]
+        let vc = EnvironmentViewController()
+        viewControllers = [vc]
     }
     
     private func showPlayerController(
@@ -84,7 +110,11 @@ class MainNavigationController: UINavigationController {
         playerVC.playbackProperties = properties
         playerVC.playable = AssetPlayable(assetId: assetID)
         
+        
         viewControllers.append(playerVC)
+//        pushViewController(playerVC, animated: false)
+        
+        print("RDK player VC should be there")
     }
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
