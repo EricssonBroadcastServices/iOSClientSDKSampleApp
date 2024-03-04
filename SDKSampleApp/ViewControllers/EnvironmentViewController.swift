@@ -249,14 +249,7 @@ extension EnvironmentViewController {
                     StorageProvider.store(environment: environment)
                     StorageProvider.store(sessionToken: credentials.sessionToken)
                     
-                    let navigationController = MainNavigationController()
-                    let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-                    as GCKUICastContainerViewController
-                    castContainerVC.miniMediaControlsItemEnabled = true
-                    if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
-                        mainWindow.rootViewController = castContainerVC
-                    }
-                    
+                    reloadAppNavigation()
                 }
             }
         

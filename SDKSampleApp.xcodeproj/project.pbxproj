@@ -12,6 +12,9 @@
 		376FBBF22B9646D400C0AB48 /* QRCodeParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */; };
 		376FBBF42B9646E700C0AB48 /* QRCodeURLParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */; };
 		376FBBF62B96554300C0AB48 /* QRCodeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF52B96554300C0AB48 /* QRCodeData.swift */; };
+		376FBBF92B9658B500C0AB48 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF82B9658B500C0AB48 /* Helpers.swift */; };
+		376FBBFA2B9658B500C0AB48 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF82B9658B500C0AB48 /* Helpers.swift */; };
+		376FBBFB2B9658B500C0AB48 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF82B9658B500C0AB48 /* Helpers.swift */; };
 		68A974842A013BC500A68431 /* LNPopupController-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 68A974832A013BC500A68431 /* LNPopupController-Static */; };
 		68DED0822AD8145700FA50BF /* iOSClientExposurePlayback in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0812AD8145700FA50BF /* iOSClientExposurePlayback */; };
 		68DED0852AD8147500FA50BF /* iOSClientExposureDownload in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0842AD8147500FA50BF /* iOSClientExposureDownload */; };
@@ -162,6 +165,7 @@
 		376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeParameter.swift; sourceTree = "<group>"; };
 		376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeURLParameters.swift; sourceTree = "<group>"; };
 		376FBBF52B96554300C0AB48 /* QRCodeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeData.swift; sourceTree = "<group>"; };
+		376FBBF82B9658B500C0AB48 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		68DED0862AD8169000FA50BF /* AssetListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListCell.swift; sourceTree = "<group>"; };
 		780B2DEF251B6B4C003B2A94 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		780B2E03251B6B4C003B2A94 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -289,13 +293,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		37224BBA2B909D190005FCBE /* QRCodeReader */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = QRCodeReader;
-			sourceTree = "<group>";
-		};
 		376FBBF72B96556200C0AB48 /* QRCode */ = {
 			isa = PBXGroup;
 			children = (
@@ -432,10 +429,10 @@
 		78C2510225139E1B001ED9E3 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				37224BBA2B909D190005FCBE /* QRCodeReader */,
 				78C2510325139E3C001ED9E3 /* Theme */,
 				78C2510A25139ED1001ED9E3 /* StorageProvider.swift */,
 				781C373F25187CA60094C2C6 /* UIViewController+Extension.swift */,
+				376FBBF82B9658B500C0AB48 /* Helpers.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -784,6 +781,7 @@
 				7825E70E27633DB000DC4FA7 /* ContentProposalViewController.swift in Sources */,
 				78D7447B274E3564002D2FAE /* StorageProvider.swift in Sources */,
 				7825E71E2763405400DC4FA7 /* AssetViewModel.swift in Sources */,
+				376FBBFA2B9658B500C0AB48 /* Helpers.swift in Sources */,
 				78370416274E300300EC1F26 /* LoginViewController.swift in Sources */,
 				7825E7192763400F00DC4FA7 /* PlayerAssetDataSource.swift in Sources */,
 				7837040E274E2E8F00EC1F26 /* EnviornmentViewController.swift in Sources */,
@@ -798,6 +796,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				78B6D8C9278D751400BBD3F5 /* ContentView.swift in Sources */,
+				376FBBFB2B9658B500C0AB48 /* Helpers.swift in Sources */,
 				78B6D92D278D846D00BBD3F5 /* PlayerControls.swift in Sources */,
 				78B6D929278D846800BBD3F5 /* ProgramBasedTimeline.swift in Sources */,
 				78B6D957278D84E800BBD3F5 /* UIColor+hexColor.swift in Sources */,
@@ -848,6 +847,7 @@
 				781C3873251A1AF70094C2C6 /* RootViewController.swift in Sources */,
 				37224BBC2B909D320005FCBE /* QRScannerViewController.swift in Sources */,
 				78C250FD25139E09001ED9E3 /* MainNavigationController.swift in Sources */,
+				376FBBF92B9658B500C0AB48 /* Helpers.swift in Sources */,
 				78F6D49D279163A700D2B5B2 /* StickyPlayerViewController.swift in Sources */,
 				78C2512F25139F82001ED9E3 /* TrackSelectionViewController.swift in Sources */,
 				78C2514A25139FF8001ED9E3 /* AssetListTableViewCell.swift in Sources */,

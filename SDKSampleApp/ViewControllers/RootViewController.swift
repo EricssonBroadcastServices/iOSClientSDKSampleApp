@@ -169,13 +169,11 @@ extension RootViewController {
     /// Log out the user from the application
     func logoutUser() {
         
-        guard let environment = StorageProvider.storedEnvironment, let sessionToken = StorageProvider.storedSessionToken else {
-            
-            let navigationController = MainNavigationController()
-            let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-              as GCKUICastContainerViewController
-            castContainerVC.miniMediaControlsItemEnabled = true
-            UIApplication.shared.keyWindow?.rootViewController = castContainerVC
+        guard
+            let environment = StorageProvider.storedEnvironment,
+            let sessionToken = StorageProvider.storedSessionToken
+        else {
+            reloadAppNavigation()
             return
         }
         
@@ -191,11 +189,7 @@ extension RootViewController {
                         StorageProvider.store(environment: nil)
                         StorageProvider.store(sessionToken: nil)
                         
-                        let navigationController = MainNavigationController()
-                        let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-                          as GCKUICastContainerViewController
-                        castContainerVC.miniMediaControlsItemEnabled = true
-                        UIApplication.shared.keyWindow?.rootViewController = castContainerVC
+                        reloadAppNavigation()
                     })
                     
                     let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
@@ -205,11 +199,7 @@ extension RootViewController {
                     StorageProvider.store(environment: nil)
                     StorageProvider.store(sessionToken: nil)
                     
-                    let navigationController = MainNavigationController()
-                    let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-                      as GCKUICastContainerViewController
-                    castContainerVC.miniMediaControlsItemEnabled = true
-                    UIApplication.shared.keyWindow?.rootViewController = castContainerVC
+                    reloadAppNavigation()
                 }
         }
     }
