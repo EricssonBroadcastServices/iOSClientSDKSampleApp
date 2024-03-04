@@ -37,7 +37,7 @@ class MainNavigationController: UINavigationController {
     /// Show Enviornment view if user not logged in
     private func showEnvironmentController() {
         let vc = EnvironmentViewController()
-        vc.tryAutoLogIn = qrCodeData?.isAnonymousLoginPossible ?? false
+//        vc.tryAutoLogIn = qrCodeData?.isAnonymousLoginPossible ?? false // rdk
         viewControllers = [vc]
     }
     

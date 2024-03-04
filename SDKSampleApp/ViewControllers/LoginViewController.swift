@@ -163,36 +163,13 @@ extension LoginViewController {
             username != "",
             password != ""
         else {
-            
-            Authenticate(environment: environment)
-                .anonymous()
-                .request()
-                .validate()
-                .response { [weak self] in
-                    
-                    if let error = $0.error {
-                        
-                        let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
-                        self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert)
-                    }
-                    
-                    if let credentials = $0.value {
-                        
-                        StorageProvider.store(environment: self?.environment)
-                        StorageProvider.store(sessionToken: credentials.sessionToken)
-                        
-                        reloadAppNavigation()
-                    }
-                }
-            
-//            self.popupAlert(title:NSLocalizedString("Sorry", comment: "") , message: NSLocalizedString("Please fill all fields", comment: ""), actions: [okAction], preferedStyle: .alert)
+            self.popupAlert(title:NSLocalizedString("Sorry", comment: "") , message: NSLocalizedString("Please fill all fields", comment: ""), actions: [okAction], preferedStyle: .alert)
             
             return
         }
         
-        
         Authenticate(environment: environment)
-            .login(username: "", password: "")
+            .login(username: username, password: password)
             .request()
             .validate()
             .response{ [weak self] in

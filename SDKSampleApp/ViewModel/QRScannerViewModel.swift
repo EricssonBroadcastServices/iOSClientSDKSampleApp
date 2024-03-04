@@ -4,6 +4,7 @@ import iOSClientExposure
 
 class QRScannerViewModel: NSObject {
     
+    private let jsPlayerURL = "https://ericssonbroadcastservices.github.io/javascript-player/?"
     private var session: AVCaptureSession = AVCaptureSession()
     private var isScanning = true
     
@@ -94,10 +95,16 @@ extension QRScannerViewModel: AVCaptureMetadataOutputObjectsDelegate {
 // MARK: - private functions
 extension QRScannerViewModel {
     
-    private func extractURLParameters(from qrCodeData: String) -> QRCodeURLParameters {
+    func extractURLParameters(from qrCodeData: String) -> QRCodeURLParameters {
         var parameters = QRCodeURLParameters()
-        let parameterPairs = qrCodeData.components(separatedBy: "&")
+        print(qrCodeData)
+        // Remove the leading prefix if present
+        let cleanedData = qrCodeData.replacingOccurrences(of: jsPlayerURL, with: "")
         
+        // Split the string by "&" to get individual parameters
+        let parameterPairs = cleanedData.components(separatedBy: "&")
+        
+        // Iterate over parameter pairs and extract key-value pairs
         for pair in parameterPairs {
             let components = pair.components(separatedBy: "=")
             if components.count == 2 {
@@ -119,10 +126,6 @@ extension QRScannerViewModel {
     
     private func navigateWithQRParams(qrParams: QRCodeURLParameters) {
         
-        if let sessionToken = SessionToken(value: qrParams.sessionToken) {
-            StorageProvider.store(sessionToken: sessionToken)
-        }
-        
         let baseUrl = qrParams.env
         let customer = qrParams.cu
         let businessUnit = qrParams.bu
@@ -134,6 +137,35 @@ extension QRScannerViewModel {
             businessUnit: businessUnit ?? ""
         )
         StorageProvider.store(environment: environment)
+        
+        if let sessionToken = SessionToken(value: qrParams.sessionToken) {
+            StorageProvider.store(sessionToken: sessionToken)
+            
+            let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
+                (alert: UIAlertAction!) -> Void in
+            })
+            
+//            Authenticate(environment: environment)
+//                .validate(sessionToken: sessionToken)
+//                .request()
+//                .validate()
+//                .response {
+//                    
+//                    if let error = $0.error {
+//                        print("RDK wrong session token")
+//                    } else {
+//                        print("RDK OK session token")
+//                    }
+//                    
+//                    if let credentials = $0.value {
+//                        
+//                        StorageProvider.store(environment: environment)
+////                        StorageProvider.store(sessionToken: credentials.sessionToken)
+//                        
+//                        reloadAppNavigation()
+//                    }
+//                }
+        }
         
         let navigationController = MainNavigationController()
         navigationController.qrCodeData = .init(urlParams: qrParams)
