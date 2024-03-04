@@ -162,12 +162,14 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         
         showPlayerController(
             assetID: "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E",
+            qrParams: qrParams,
             environment: environment
         )
     }
     // b74e3719-3ef0-481a-8014-40fa7cea2402_82162E
     private func showPlayerController(
         assetID: String,
+        qrParams: QRCodeURLParameters,
         environment: Environment
     ) {
 //        let playerVC = PlayerViewController()
@@ -189,6 +191,7 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
 //        self.navigationController?.popToRootViewController(animated: false)
 //        self.navigationController?.viewWillAppear(false)
         let navigationController = MainNavigationController()
+        navigationController.qrCodeData = .init(urlParams: qrParams)
         let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
           as GCKUICastContainerViewController
         castContainerVC.miniMediaControlsItemEnabled = true

@@ -8,6 +8,7 @@
 
 import UIKit
 import iOSClientExposure
+import GoogleCast
 
 class EnvironmentViewController: UIViewController {
     
@@ -61,6 +62,8 @@ class EnvironmentViewController: UIViewController {
         return button
     }()
     
+    var tryAutoLogIn: Bool = false
+    
     // MARK: Life Cycle
     override func loadView() {
         super.loadView()
@@ -88,6 +91,14 @@ class EnvironmentViewController: UIViewController {
         
         self.navigationItem.title = NSLocalizedString("Environment", comment: "")
         view.backgroundColor = ColorState.active.background
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print("RDK view appeared")
+        if tryAutoLogIn {
+            anonymousLogin()
+        }
+        
     }
     
     @objc func dismissKeyboard() {
@@ -187,9 +198,61 @@ extension EnvironmentViewController {
         
     }
     
-    /// Navigate to Login Page after validation
+    /// Navigate to QR Code Scanner View
     @objc fileprivate func scanQRCode() {
         let qrScannerViewController = QRScannerViewController()
         self.navigationController?.pushViewController(qrScannerViewController, animated: true)
+    }
+}
+
+// MARK: - Actions
+extension EnvironmentViewController {
+    /// Authenticate the user with Authentication Endpoint
+    @objc fileprivate func anonymousLogin() {
+        
+        view.endEditing(true)
+        
+        // rdk add more verification
+        guard
+            let environmentUrl = environmentUrlTextField.text,
+            let customer = customerNameTextField.text,
+            let businessUnit = businessUnitTextField.text
+        else {
+            return
+        }
+        
+        let environment = Environment(baseUrl: environmentUrl, customer: customer, businessUnit: businessUnit, version: "v2")
+        
+        let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
+            (alert: UIAlertAction!) -> Void in
+        })
+        
+        Authenticate(environment: environment)
+            .anonymous()
+            .request()
+            .validate()
+            .response { [weak self, environment] in
+                
+                if let error = $0.error {
+                    
+                    let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
+                    self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert)
+                }
+                
+                if let credentials = $0.value {
+                    
+                    StorageProvider.store(environment: environment)
+                    StorageProvider.store(sessionToken: credentials.sessionToken)
+                    
+                    let navigationController = MainNavigationController()
+                    let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
+                    as GCKUICastContainerViewController
+                    castContainerVC.miniMediaControlsItemEnabled = true
+                    if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                        mainWindow.rootViewController = castContainerVC
+                    }
+                }
+            }
+        
     }
 }

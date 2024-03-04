@@ -10,10 +10,23 @@ import UIKit
 import iOSClientExposure
 import iOSClientExposurePlayback
 
+struct QRCodeData {
+    let urlParams: QRCodeURLParameters?
+    
+    var isAnonymousLoginPossible: Bool {
+        urlParams?.bu != nil && urlParams?.cu != nil && urlParams?.env != nil
+        //rdk add simple check if URL and so on
+    }
+    
+    var isContentDataAvailable: Bool {
+        urlParams?.source != nil
+    }
+}
+
 /// Handles the main navigation in the app
 class MainNavigationController: UINavigationController {
     
-    private var assetID: String? //= "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E"
+    var qrCodeData: QRCodeData? //= "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,10 +51,10 @@ class MainNavigationController: UINavigationController {
                 return
             }
     
-            if let assetID {
+        if let qrCodeData, qrCodeData.isContentDataAvailable {
                 print("RDK showPlayerController")
                 showPlayerController(
-                    assetID: assetID,
+                    qrCodeData: qrCodeData,
                     environment: environment
                 )
             }
@@ -71,11 +84,12 @@ class MainNavigationController: UINavigationController {
     /// Show Enviornment view if user not logged in
     private func showEnvironmentController() {
         let vc = EnvironmentViewController()
+        vc.tryAutoLogIn = qrCodeData?.isAnonymousLoginPossible ?? false
         viewControllers = [vc]
     }
     
     private func showPlayerController(
-        assetID: String,
+        qrCodeData: QRCodeData,
         environment: Environment
     ) {
         let playerVC = PlayerViewController()
@@ -89,7 +103,7 @@ class MainNavigationController: UINavigationController {
         )
         
         playerVC.playbackProperties = properties
-        playerVC.playable = AssetPlayable(assetId: assetID)
+        playerVC.playable = AssetPlayable(assetId: qrCodeData.urlParams?.source ?? "")
         
         
         viewControllers.append(playerVC)
