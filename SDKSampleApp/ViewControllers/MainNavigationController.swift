@@ -13,26 +13,7 @@ import iOSClientExposurePlayback
 /// Handles the main navigation in the app
 class MainNavigationController: UINavigationController {
     
-    private var assetID: String? = "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E"
-    
-//    init(
-//        rootViewController: UIViewController,
-//        assetID: String? = nil
-//    ) {
-//        super.init(rootViewController: rootViewController)
-//        // Additional custom initialization code if needed
-//    }
-    
-//    public init(
-//        assetID: String? = nil
-//    ) {
-//        super.init(rootViewController: <#T##UIViewController#>)
-//        self.assetID = assetID
-//    }
-    
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
+    private var assetID: String? //= "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E"
     
     override func viewDidLoad() {
         super.viewDidLoad()

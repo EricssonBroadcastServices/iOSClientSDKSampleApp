@@ -80,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GCKRemoteMediaClientListe
         window = UIWindow(frame: UIScreen.main.bounds)
         
         let navigationController = MainNavigationController(
-            rootViewController: EnvironmentViewController()
+//            rootViewController: EnvironmentViewController()
         )
         
         let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
