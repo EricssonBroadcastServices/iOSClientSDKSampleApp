@@ -2,10 +2,10 @@ import AVFoundation
 import GoogleCast
 import iOSClientExposure
 
-class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
+class QRScannerViewModel: NSObject {
     
-    var session: AVCaptureSession = AVCaptureSession()
-    var isScanning = true
+    private var session: AVCaptureSession = AVCaptureSession()
+    private var isScanning = true
     
     public override init() {
         super.init()
@@ -31,7 +31,7 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         rectOfInterest: CGRect
     ) -> AVCaptureSession? {
         guard let captureDevice = AVCaptureDevice.default(for: .video) else { return nil }
-
+        
         do {
             let input = try AVCaptureDeviceInput(device: captureDevice)
             session.addInput(input)
@@ -52,11 +52,11 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
     ) -> AVCaptureMetadataOutput {
         let screenWidth = UIScreen.main.bounds.width
         let screenHeight = UIScreen.main.bounds.height
-      
+        
         let output = AVCaptureMetadataOutput()
         
         output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-
+        
         output.rectOfInterest = CGRect(
             x: rectOfInterest.origin.y / screenHeight,
             y: rectOfInterest.origin.x / screenWidth,
@@ -66,7 +66,11 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         return output
     }
     
-    func metadataOutput(
+}
+
+// MARK: - AVFoundation QR
+extension QRScannerViewModel: AVCaptureMetadataOutputObjectsDelegate {
+    internal func metadataOutput(
         _ output: AVCaptureMetadataOutput,
         didOutput metadataObjects: [AVMetadataObject],
         from connection: AVCaptureConnection
@@ -77,6 +81,7 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
                 if metadataObject.type == .qr {
                     if let qrCodeData = metadataObject.stringValue {
                         let parameters = extractURLParameters(from: qrCodeData)
+                        navigateWithQRParams(qrParams: parameters)
                         session.stopRunning()
                         AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }
@@ -84,17 +89,15 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
             }
         }
     }
+}
+
+// MARK: - private functions
+extension QRScannerViewModel {
     
-    func extractURLParameters(from qrCodeData: String) -> QRCodeURLParameters {
+    private func extractURLParameters(from qrCodeData: String) -> QRCodeURLParameters {
         var parameters = QRCodeURLParameters()
+        let parameterPairs = qrCodeData.components(separatedBy: "&")
         
-        // Remove the leading prefix if present
-        let cleanedData = qrCodeData.replacingOccurrences(of: "https://ericssonbroadcastservices.github.io/javascript-player/?", with: "")
-        
-        // Split the string by "&" to get individual parameters
-        let parameterPairs = cleanedData.components(separatedBy: "&")
-        
-        // Iterate over parameter pairs and extract key-value pairs
         for pair in parameterPairs {
             let components = pair.components(separatedBy: "=")
             if components.count == 2 {
@@ -111,11 +114,10 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
                 }
             }
         }
-        navigateBack(qrParams: parameters)
         return parameters
     }
     
-    func navigateBack(qrParams: QRCodeURLParameters) {
+    private func navigateWithQRParams(qrParams: QRCodeURLParameters) {
         
         if let sessionToken = SessionToken(value: qrParams.sessionToken) {
             StorageProvider.store(sessionToken: sessionToken)
@@ -128,20 +130,19 @@ class QRScannerViewModel: NSObject, AVCaptureMetadataOutputObjectsDelegate {
         
         let environment = Environment(
             baseUrl: baseUrl ?? "",
-            customer: customer ?? "", // rdk here only if all are set up
+            customer: customer ?? "",
             businessUnit: businessUnit ?? ""
         )
-        
         StorageProvider.store(environment: environment)
         
         let navigationController = MainNavigationController()
         navigationController.qrCodeData = .init(urlParams: qrParams)
         let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-          as GCKUICastContainerViewController
+        as GCKUICastContainerViewController
         castContainerVC.miniMediaControlsItemEnabled = true
-        UIApplication.shared.keyWindow?.rootViewController = castContainerVC
-        
+        if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+            mainWindow.rootViewController = castContainerVC
+        }
         
     }
 }
-
