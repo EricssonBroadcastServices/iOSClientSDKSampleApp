@@ -14,24 +14,46 @@ struct QRCodeData {
     let urlParams: QRCodeURLParameters?
     
     var isAnonymousLoginPossible: Bool {
-        urlParams?.bu != nil && urlParams?.cu != nil && urlParams?.env != nil
+        urlParams?.bu != nil
+        &&
+        urlParams?.cu != nil
+        &&
+        urlParams?.env != nil
+        &&
+        urlParams?.sessionToken == nil
         //rdk add simple check if URL and so on
     }
     
     var isContentDataAvailable: Bool {
         urlParams?.source != nil
     }
+    
+    var isSourceAssetURL: Bool {
+        guard
+            let assetID = urlParams?.source
+        else {
+            return false
+        }
+        return isValidURL(assetID)
+    }
+    
+    private func isValidURL(
+        _ urlString: String
+    ) -> Bool {
+        if let url = URL(string: urlString) {
+            return UIApplication.shared.canOpenURL(url)
+        }
+        return false
+    }
 }
 
 /// Handles the main navigation in the app
 class MainNavigationController: UINavigationController {
-    
-    var qrCodeData: QRCodeData? //= "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E"
+
+    var qrCodeData: QRCodeData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print("RDK viewDidLoad")
         
         if StorageProvider.storedSessionToken != nil {
             showRootController()
@@ -42,38 +64,19 @@ class MainNavigationController: UINavigationController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        print("RDK viewWillAppear")
-        
             guard
                 let environment = StorageProvider.storedEnvironment
             else {
-                print("RDK guard return")
                 return
             }
     
         if let qrCodeData, qrCodeData.isContentDataAvailable {
-                print("RDK showPlayerController")
                 showPlayerController(
                     qrCodeData: qrCodeData,
                     environment: environment
                 )
             }
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        guard
-//            let environment = StorageProvider.storedEnvironment
-//        else {
-//            return
-//        }
-//        
-//        if let assetID {
-//            showPlayerController(
-//                assetID: assetID,
-//                environment: environment
-//            )
-//        }
-//    }
     
     /// Show Root (main) view if user not logged in
     private func showRootController() {
@@ -92,24 +95,31 @@ class MainNavigationController: UINavigationController {
         qrCodeData: QRCodeData,
         environment: Environment
     ) {
+        
+        print("RDK SOURCE ASSET IS URL? ->\(qrCodeData.isSourceAssetURL)")
+        
+        guard
+            let source = qrCodeData.urlParams?.source
+        else {
+            return
+        }
+        
         let playerVC = PlayerViewController()
         
         playerVC.environment = environment
         playerVC.sessionToken = StorageProvider.storedSessionToken //  rdk this should be optional - if not provided then crash
         
-        let properties = PlaybackProperties(
-            autoplay: true,
-            playFrom: .bookmark
-        )
         
-        playerVC.playbackProperties = properties
-        playerVC.playable = AssetPlayable(assetId: qrCodeData.urlParams?.source ?? "")
-        
+        if qrCodeData.isSourceAssetURL,
+        let sourceURL = URL(string: source) {
+            playerVC.shouldPlayWithUrl = true
+            playerVC.urlPlayable = URLPlayable(url: sourceURL)
+        } else {
+            playerVC.shouldPlayWithUrl = false
+            playerVC.playable = AssetPlayable(assetId: source)
+        }
         
         viewControllers.append(playerVC)
-//        pushViewController(playerVC, animated: false)
-        
-        print("RDK player VC should be there")
     }
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
