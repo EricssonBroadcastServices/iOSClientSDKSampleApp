@@ -11,6 +11,7 @@
 		376FBBF02B963BF500C0AB48 /* QRScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBEF2B963BF500C0AB48 /* QRScannerViewModel.swift */; };
 		376FBBF22B9646D400C0AB48 /* QRCodeParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */; };
 		376FBBF42B9646E700C0AB48 /* QRCodeURLParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */; };
+		376FBBF62B96554300C0AB48 /* QRCodeData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF52B96554300C0AB48 /* QRCodeData.swift */; };
 		68A974842A013BC500A68431 /* LNPopupController-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 68A974832A013BC500A68431 /* LNPopupController-Static */; };
 		68DED0822AD8145700FA50BF /* iOSClientExposurePlayback in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0812AD8145700FA50BF /* iOSClientExposurePlayback */; };
 		68DED0852AD8147500FA50BF /* iOSClientExposureDownload in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0842AD8147500FA50BF /* iOSClientExposureDownload */; };
@@ -160,6 +161,7 @@
 		376FBBEF2B963BF500C0AB48 /* QRScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewModel.swift; sourceTree = "<group>"; };
 		376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeParameter.swift; sourceTree = "<group>"; };
 		376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeURLParameters.swift; sourceTree = "<group>"; };
+		376FBBF52B96554300C0AB48 /* QRCodeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeData.swift; sourceTree = "<group>"; };
 		68DED0862AD8169000FA50BF /* AssetListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListCell.swift; sourceTree = "<group>"; };
 		780B2DEF251B6B4C003B2A94 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		780B2E03251B6B4C003B2A94 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -292,6 +294,16 @@
 			children = (
 			);
 			path = QRCodeReader;
+			sourceTree = "<group>";
+		};
+		376FBBF72B96556200C0AB48 /* QRCode */ = {
+			isa = PBXGroup;
+			children = (
+				376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */,
+				376FBBF52B96554300C0AB48 /* QRCodeData.swift */,
+				376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */,
+			);
+			path = QRCode;
 			sourceTree = "<group>";
 		};
 		7825E6EE276339F400DC4FA7 /* Push Next Content */ = {
@@ -510,10 +522,9 @@
 		78C251862513A0DC001ED9E3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				376FBBF72B96556200C0AB48 /* QRCode */,
 				78C251872513A0E7001ED9E3 /* TrackModel.swift */,
 				7825E7172763400F00DC4FA7 /* PlayerAssetDataSource.swift */,
-				376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */,
-				376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -840,6 +851,7 @@
 				78F6D49D279163A700D2B5B2 /* StickyPlayerViewController.swift in Sources */,
 				78C2512F25139F82001ED9E3 /* TrackSelectionViewController.swift in Sources */,
 				78C2514A25139FF8001ED9E3 /* AssetListTableViewCell.swift in Sources */,
+				376FBBF62B96554300C0AB48 /* QRCodeData.swift in Sources */,
 				784FF7B529432A970098E622 /* AudioPlayerViewController.swift in Sources */,
 				78C251AF2513A14F001ED9E3 /* RBMPlayerControlLabel.swift in Sources */,
 				78C2518F2513A106001ED9E3 /* TrackSelectionViewModel.swift in Sources */,

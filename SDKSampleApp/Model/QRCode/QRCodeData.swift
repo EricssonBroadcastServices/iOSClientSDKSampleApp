@@ -12,10 +12,9 @@ struct QRCodeData {
         urlParams?.env != nil
         &&
         urlParams?.sessionToken == nil
-        //rdk add simple check if URL and so on
     }
     
-    var isContentDataAvailable: Bool {
+    var isContentAssetAvailable: Bool {
         urlParams?.source != nil
     }
     

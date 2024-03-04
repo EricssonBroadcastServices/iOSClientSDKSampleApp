@@ -213,7 +213,6 @@ extension EnvironmentViewController {
         
         view.endEditing(true)
         
-        // rdk add more verification
         guard
             let environmentUrl = environmentUrlTextField.text,
             let customer = customerNameTextField.text,
@@ -222,7 +221,12 @@ extension EnvironmentViewController {
             return
         }
         
-        let environment = Environment(baseUrl: environmentUrl, customer: customer, businessUnit: businessUnit, version: "v2")
+        let environment = Environment(
+            baseUrl: environmentUrl,
+            customer: customer,
+            businessUnit: businessUnit,
+            version: "v2"
+        )
         
         let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
             (alert: UIAlertAction!) -> Void in

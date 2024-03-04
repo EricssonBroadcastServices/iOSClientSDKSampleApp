@@ -79,9 +79,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GCKRemoteMediaClientListe
         
         window = UIWindow(frame: UIScreen.main.bounds)
         
-        let navigationController = MainNavigationController(
-//            rootViewController: EnvironmentViewController()
-        )
+        let navigationController = MainNavigationController()
         
         let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
         as GCKUICastContainerViewController
@@ -124,7 +122,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GCKRemoteMediaClientListe
         scheduleAppRefresh(minutes: 2)
         
         let manager = iOSClientExposure.BackgroundAnalyticsManager()
-        manager.fushOfflineAnalytics()
+        manager.flushOfflineAnalytics()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
             task.setTaskCompleted(success: true)
@@ -141,7 +139,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GCKRemoteMediaClientListe
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name.gckExpandedMediaControlsTriggered, object: nil)
-        
         
     }
     
@@ -335,7 +332,7 @@ extension AppDelegate {
             }
             
             sessionManager.backgroundErrorCompletionHandler = { error in
-                print(" backgroundErrorCompletionHandler in app Delegate " , error )
+                print(" backgroundErrorCompletionHandler in app Delegate " , error)
             }
         }
     }

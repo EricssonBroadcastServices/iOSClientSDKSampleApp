@@ -10,43 +10,6 @@ import UIKit
 import iOSClientExposure
 import iOSClientExposurePlayback
 
-struct QRCodeData {
-    let urlParams: QRCodeURLParameters?
-    
-    var isAnonymousLoginPossible: Bool {
-        urlParams?.bu != nil
-        &&
-        urlParams?.cu != nil
-        &&
-        urlParams?.env != nil
-        &&
-        urlParams?.sessionToken == nil
-        //rdk add simple check if URL and so on
-    }
-    
-    var isContentDataAvailable: Bool {
-        urlParams?.source != nil
-    }
-    
-    var isSourceAssetURL: Bool {
-        guard
-            let assetID = urlParams?.source
-        else {
-            return false
-        }
-        return isValidURL(assetID)
-    }
-    
-    private func isValidURL(
-        _ urlString: String
-    ) -> Bool {
-        if let url = URL(string: urlString) {
-            return UIApplication.shared.canOpenURL(url)
-        }
-        return false
-    }
-}
-
 /// Handles the main navigation in the app
 class MainNavigationController: UINavigationController {
 
@@ -65,21 +28,6 @@ class MainNavigationController: UINavigationController {
         tryPlayingAssetIfPossible()
     }
     
-    func tryPlayingAssetIfPossible() {
-        guard
-            let environment = StorageProvider.storedEnvironment
-        else {
-            return
-        }
-
-    if let qrCodeData, qrCodeData.isContentDataAvailable {
-            showPlayerController(
-                qrCodeData: qrCodeData,
-                environment: environment
-            )
-        }
-    }
-    
     /// Show Root (main) view if user not logged in
     private func showRootController() {
         let vc = RootViewController()
@@ -91,6 +39,30 @@ class MainNavigationController: UINavigationController {
         let vc = EnvironmentViewController()
         vc.tryAutoLogIn = qrCodeData?.isAnonymousLoginPossible ?? false
         viewControllers = [vc]
+    }
+    
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return .lightContent
+    }
+}
+
+// MARK: - QR Code related funcs
+
+extension MainNavigationController {
+    
+    func tryPlayingAssetIfPossible() {
+        guard
+            let environment = StorageProvider.storedEnvironment
+        else {
+            return
+        }
+
+    if let qrCodeData, qrCodeData.isContentAssetAvailable {
+            showPlayerController(
+                qrCodeData: qrCodeData,
+                environment: environment
+            )
+        }
     }
     
     private func showPlayerController(
@@ -107,24 +79,18 @@ class MainNavigationController: UINavigationController {
         let playerVC = PlayerViewController()
         
         playerVC.environment = environment
-        playerVC.sessionToken = StorageProvider.storedSessionToken //  rdk this should be optional - if not provided then crash
-        
+        playerVC.sessionToken = StorageProvider.storedSessionToken
         
         if qrCodeData.isSourceAssetURL,
         let sourceURL = URL(string: source) {
             playerVC.shouldPlayWithUrl = true
             playerVC.urlPlayable = URLPlayable(url: sourceURL)
-        } else {
+            viewControllers.append(playerVC)
+        } else if playerVC.sessionToken != nil {
             playerVC.shouldPlayWithUrl = false
             playerVC.playable = AssetPlayable(assetId: source)
+            viewControllers.append(playerVC)
         }
-        print("rdk showPlayerController")
-        viewControllers.append(playerVC)
-    }
-    
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        return .lightContent
+        
     }
 }
-
-
