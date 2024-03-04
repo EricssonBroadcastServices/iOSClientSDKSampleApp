@@ -94,7 +94,6 @@ class EnvironmentViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        print("RDK view appeared")
         if tryAutoLogIn {
             anonymousLogin()
         }
@@ -200,7 +199,9 @@ extension EnvironmentViewController {
     
     /// Navigate to QR Code Scanner View
     @objc fileprivate func scanQRCode() {
-        let qrScannerViewController = QRScannerViewController()
+        let qrScannerViewController = QRScannerViewController(
+            viewModel: QRScannerViewModel()
+        )
         self.navigationController?.pushViewController(qrScannerViewController, animated: true)
     }
 }
@@ -251,6 +252,7 @@ extension EnvironmentViewController {
                     if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
                         mainWindow.rootViewController = castContainerVC
                     }
+                    
                 }
             }
         

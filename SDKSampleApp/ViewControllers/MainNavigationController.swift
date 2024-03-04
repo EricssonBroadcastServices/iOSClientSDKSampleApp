@@ -54,28 +54,30 @@ class MainNavigationController: UINavigationController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         if StorageProvider.storedSessionToken != nil {
             showRootController()
         } else {
             showEnvironmentController()
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
-            guard
-                let environment = StorageProvider.storedEnvironment
-            else {
-                return
-            }
+        tryPlayingAssetIfPossible()
+    }
     
-        if let qrCodeData, qrCodeData.isContentDataAvailable {
-                showPlayerController(
-                    qrCodeData: qrCodeData,
-                    environment: environment
-                )
-            }
+    func tryPlayingAssetIfPossible() {
+        guard
+            let environment = StorageProvider.storedEnvironment
+        else {
+            return
+        }
+
+    if let qrCodeData, qrCodeData.isContentDataAvailable {
+            showPlayerController(
+                qrCodeData: qrCodeData,
+                environment: environment
+            )
+        }
     }
     
     /// Show Root (main) view if user not logged in
@@ -95,11 +97,9 @@ class MainNavigationController: UINavigationController {
         qrCodeData: QRCodeData,
         environment: Environment
     ) {
-        
-        print("RDK SOURCE ASSET IS URL? ->\(qrCodeData.isSourceAssetURL)")
-        
         guard
-            let source = qrCodeData.urlParams?.source
+            let source = qrCodeData.urlParams?.source,
+            qrCodeData.urlParams?.sessionToken != nil
         else {
             return
         }
@@ -118,7 +118,7 @@ class MainNavigationController: UINavigationController {
             playerVC.shouldPlayWithUrl = false
             playerVC.playable = AssetPlayable(assetId: source)
         }
-        
+        print("rdk showPlayerController")
         viewControllers.append(playerVC)
     }
     

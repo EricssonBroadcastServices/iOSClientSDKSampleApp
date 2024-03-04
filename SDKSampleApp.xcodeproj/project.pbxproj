@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		37224BBC2B909D320005FCBE /* QRScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37224BBB2B909D320005FCBE /* QRScannerViewController.swift */; };
+		376FBBF02B963BF500C0AB48 /* QRScannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBEF2B963BF500C0AB48 /* QRScannerViewModel.swift */; };
+		376FBBF22B9646D400C0AB48 /* QRCodeParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */; };
+		376FBBF42B9646E700C0AB48 /* QRCodeURLParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */; };
 		68A974842A013BC500A68431 /* LNPopupController-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 68A974832A013BC500A68431 /* LNPopupController-Static */; };
 		68DED0822AD8145700FA50BF /* iOSClientExposurePlayback in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0812AD8145700FA50BF /* iOSClientExposurePlayback */; };
 		68DED0852AD8147500FA50BF /* iOSClientExposureDownload in Frameworks */ = {isa = PBXBuildFile; productRef = 68DED0842AD8147500FA50BF /* iOSClientExposureDownload */; };
@@ -154,6 +157,9 @@
 
 /* Begin PBXFileReference section */
 		37224BBB2B909D320005FCBE /* QRScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewController.swift; sourceTree = "<group>"; };
+		376FBBEF2B963BF500C0AB48 /* QRScannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScannerViewModel.swift; sourceTree = "<group>"; };
+		376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeParameter.swift; sourceTree = "<group>"; };
+		376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeURLParameters.swift; sourceTree = "<group>"; };
 		68DED0862AD8169000FA50BF /* AssetListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetListCell.swift; sourceTree = "<group>"; };
 		780B2DEF251B6B4C003B2A94 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		780B2E03251B6B4C003B2A94 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -284,7 +290,6 @@
 		37224BBA2B909D190005FCBE /* QRCodeReader */ = {
 			isa = PBXGroup;
 			children = (
-				37224BBB2B909D320005FCBE /* QRScannerViewController.swift */,
 			);
 			path = QRCodeReader;
 			sourceTree = "<group>";
@@ -437,6 +442,7 @@
 		78C2510E25139EEF001ED9E3 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				37224BBB2B909D320005FCBE /* QRScannerViewController.swift */,
 				78C250FC25139E09001ED9E3 /* MainNavigationController.swift */,
 				781C3872251A1AF70094C2C6 /* RootViewController.swift */,
 				78C2510F25139EF8001ED9E3 /* SelectionTableViewController.swift */,
@@ -506,6 +512,8 @@
 			children = (
 				78C251872513A0E7001ED9E3 /* TrackModel.swift */,
 				7825E7172763400F00DC4FA7 /* PlayerAssetDataSource.swift */,
+				376FBBF12B9646D400C0AB48 /* QRCodeParameter.swift */,
+				376FBBF32B9646E700C0AB48 /* QRCodeURLParameters.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -515,6 +523,7 @@
 			children = (
 				78C2518E2513A106001ED9E3 /* TrackSelectionViewModel.swift */,
 				7825E71C2763405400DC4FA7 /* AssetViewModel.swift */,
+				376FBBEF2B963BF500C0AB48 /* QRScannerViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -808,12 +817,14 @@
 				78C2513925139FB6001ED9E3 /* PlayerControls.swift in Sources */,
 				78C2511925139F33001ED9E3 /* LoginViewController.swift in Sources */,
 				7825E71D2763405400DC4FA7 /* AssetViewModel.swift in Sources */,
+				376FBBF02B963BF500C0AB48 /* QRScannerViewModel.swift in Sources */,
 				78C251552513A045001ED9E3 /* UIView+Anchor.swift in Sources */,
 				78C2512725139F64001ED9E3 /* EPGListViewController.swift in Sources */,
 				78C2514F2513A02F001ED9E3 /* UIImageView+constraint.swift in Sources */,
 				78C251A72513A135001ED9E3 /* RBMTextField.swift in Sources */,
 				7838DCBA27A025AA0052848A /* AVAudioSession+Airplay.swift in Sources */,
 				78456DF9294B0AA500BC6B65 /* AudioPlayerWithAVAudioEngine.swift in Sources */,
+				376FBBF22B9646D400C0AB48 /* QRCodeParameter.swift in Sources */,
 				78C251AB2513A143001ED9E3 /* RBMButton.swift in Sources */,
 				7825E7182763400F00DC4FA7 /* PlayerAssetDataSource.swift in Sources */,
 				78C2510525139E47001ED9E3 /* ColorScheme.swift in Sources */,
@@ -836,6 +847,7 @@
 				78C2512B25139F71001ED9E3 /* PlayerViewController.swift in Sources */,
 				78C251692513A092001ED9E3 /* Date+Extension.swift in Sources */,
 				78C2510B25139ED1001ED9E3 /* StorageProvider.swift in Sources */,
+				376FBBF42B9646E700C0AB48 /* QRCodeURLParameters.swift in Sources */,
 				78C251612513A077001ED9E3 /* UIViewController+Alert.swift in Sources */,
 				78C2514025139FD6001ED9E3 /* VodBasedTimeline.swift in Sources */,
 				78C251882513A0E7001ED9E3 /* TrackModel.swift in Sources */,

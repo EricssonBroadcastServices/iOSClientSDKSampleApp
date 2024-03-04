@@ -7,13 +7,26 @@ import iOSClientExposurePlayback
 
 class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
-    var session: AVCaptureSession!
+    var viewModel: QRScannerViewModel
+    var session: AVCaptureSession = AVCaptureSession()
     var isScanning = true
-
+    
+    public init(
+        viewModel: QRScannerViewModel,
+        isScanning: Bool = true
+    ) {
+        self.viewModel = viewModel
+        self.isScanning = isScanning
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        session = AVCaptureSession()
 
         guard let captureDevice = AVCaptureDevice.default(for: .video) else { return }
 
@@ -24,60 +37,88 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
             print(error.localizedDescription)
             return
         }
-
-        let output = AVCaptureMetadataOutput()
+        
+        
+        let rectOfInterest = createRectOfInterest()
+        
+//        let output = AVCaptureMetadataOutput()
+        let output = createAVCaptureMetadataOutput(rectOfInterest: rectOfInterest)
         session.addOutput(output)
-
-        output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
         output.metadataObjectTypes = [.qr]
 
-        // Define a smaller center square window as region of interest (ROI)
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-        let rectOfInterest = CGRect(x: (screenWidth - 200) / 2, y: (screenHeight - 200) / 2, width: 200, height: 200)
-        output.rectOfInterest = CGRect(x: rectOfInterest.origin.y / screenHeight, y: rectOfInterest.origin.x / screenWidth, width: rectOfInterest.size.height / screenHeight, height: rectOfInterest.size.width / screenWidth)
 
         let previewLayer = AVCaptureVideoPreviewLayer(session: session)
         previewLayer.frame = view.layer.bounds
         previewLayer.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer)
 
-        // Add semi-transparent overlay view to dim the area outside the red square
-        let overlayView = UIView(frame: view.bounds)
-        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        view.addSubview(overlayView)
-
-        // Add the transparent square view as an overlay to indicate the smaller square window
-        let squareView = UIView(frame: rectOfInterest)
-        squareView.layer.borderWidth = 2
-        squareView.layer.borderColor = UIColor.red.cgColor
-        squareView.backgroundColor = UIColor.clear
-        view.addSubview(squareView)
-
-        // Cut out the region corresponding to the red square from the overlay view
-        let maskLayer = CAShapeLayer()
-        let path = UIBezierPath(rect: overlayView.bounds)
-        path.append(UIBezierPath(rect: squareView.frame).reversing())
-        maskLayer.path = path.cgPath
-        overlayView.layer.mask = maskLayer
+        setupLayout(rectOfInterest: rectOfInterest)
 
         session.startRunning()
     }
+    
+    private func createRectOfInterest() -> CGRect {
+           let screenWidth = UIScreen.main.bounds.width
+           let screenHeight = UIScreen.main.bounds.height
+           
+           return CGRect(
+               x: (screenWidth - 200) / 2,
+               y: (screenHeight - 200) / 2,
+               width: 200,
+               height: 200
+           )
+       }
+       
+       private func createAVCaptureMetadataOutput(
+           rectOfInterest: CGRect
+       ) -> AVCaptureMetadataOutput {
+           let screenWidth = UIScreen.main.bounds.width
+           let screenHeight = UIScreen.main.bounds.height
+         
+           let output = AVCaptureMetadataOutput()
+           
+           output.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
 
-    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
+           output.rectOfInterest = CGRect(
+               x: rectOfInterest.origin.y / screenHeight,
+               y: rectOfInterest.origin.x / screenWidth,
+               width: rectOfInterest.size.height / screenHeight,
+               height: rectOfInterest.size.width / screenWidth
+           )
+           return output
+       }
+       
+       private func setupLayout(
+           rectOfInterest: CGRect
+       ) {
+           let overlayView = UIView(frame: view.bounds)
+           overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+           view.addSubview(overlayView)
+
+           let squareView = UIView(frame: rectOfInterest)
+           squareView.layer.borderWidth = 2
+           squareView.backgroundColor = UIColor.clear
+           view.addSubview(squareView)
+
+           let maskLayer = CAShapeLayer()
+           let path = UIBezierPath(rect: overlayView.bounds)
+           path.append(UIBezierPath(rect: squareView.frame).reversing())
+           maskLayer.path = path.cgPath
+           overlayView.layer.mask = maskLayer
+       }
+
+    func metadataOutput(
+        _ output: AVCaptureMetadataOutput,
+        didOutput metadataObjects: [AVMetadataObject],
+        from connection: AVCaptureConnection
+    ) {
         if isScanning {
             isScanning = false
             if let metadataObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject {
                 if metadataObject.type == .qr {
                     if let qrCodeData = metadataObject.stringValue {
-//                        print("QR Code Data: \(qrCodeData)")
-                        
                         let parameters = extractURLParameters(from: qrCodeData)
-                        print(parameters)
-                        // Handle the QR code data as needed
-                        // Stop scanning more QR codes
                         session.stopRunning()
-                        // Vibrate the device
                         AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
                     }
                 }
@@ -88,7 +129,7 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if session?.isRunning == false {
+        if session.isRunning == false {
             session.startRunning()
             isScanning = true
         }
@@ -99,7 +140,7 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if session?.isRunning == true {
+        if session.isRunning == true {
             session.stopRunning()
         }
     }
@@ -153,74 +194,14 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         
         StorageProvider.store(environment: environment)
         
-        
-//        let navigationController = MainNavigationController()
-//        let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-//          as GCKUICastContainerViewController
-//        castContainerVC.miniMediaControlsItemEnabled = true
-//        UIApplication.shared.keyWindow?.rootViewController = castContainerVC
-        
-        showPlayerController(
-            assetID: "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E",
-            qrParams: qrParams,
-            environment: environment
-        )
-    }
-    // b74e3719-3ef0-481a-8014-40fa7cea2402_82162E
-    private func showPlayerController(
-        assetID: String,
-        qrParams: QRCodeURLParameters,
-        environment: Environment
-    ) {
-//        let playerVC = PlayerViewController()
-//        
-//        playerVC.environment = environment
-//        playerVC.sessionToken = StorageProvider.storedSessionToken //  rdk this should be optional - if not provided then crash
-//        
-//        let properties = PlaybackProperties(
-//            autoplay: true,
-//            playFrom: .bookmark
-//        )
-//        
-//        playerVC.playbackProperties = properties
-//        playerVC.playable = AssetPlayable(assetId: assetID)
-//        
-//        print("RDK show")
-//        viewControllers.append(playerVC)
-        print("RDK pop to root")
-//        self.navigationController?.popToRootViewController(animated: false)
-//        self.navigationController?.viewWillAppear(false)
         let navigationController = MainNavigationController()
         navigationController.qrCodeData = .init(urlParams: qrParams)
         let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
           as GCKUICastContainerViewController
         castContainerVC.miniMediaControlsItemEnabled = true
         UIApplication.shared.keyWindow?.rootViewController = castContainerVC
-//        self.navigationController?.pushViewController(playerVC, animated: true)
+        
+        
     }
 
-}
-
-enum QRCodeParameter: String {
-    case env
-    case cu
-    case bu
-    case source
-    case sessionToken
-}
-
-struct QRCodeURLParameters {
-    var env: String?
-    var cu: String?
-    var bu: String?
-    var source: String?
-    var sessionToken: String?
-    
-    init(env: String? = nil, cu: String? = nil, bu: String? = nil, source: String? = nil, sessionToken: String? = nil) {
-        self.env = env
-        self.cu = cu
-        self.bu = bu
-        self.source = source
-        self.sessionToken = sessionToken
-    }
 }

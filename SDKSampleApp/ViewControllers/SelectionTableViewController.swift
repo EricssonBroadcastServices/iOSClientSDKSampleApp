@@ -39,11 +39,6 @@ class SelectionTableViewController: UITableViewController {
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
     }
     
-    // rdk here it works
-//    override func viewDidAppear(_ animated: Bool) {
-//        handlePlay()
-//    }
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
