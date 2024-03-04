@@ -1,5 +1,8 @@
+import Foundation
 import UIKit
+import iOSClientExposure
 import AVFoundation
+import GoogleCast
 
 class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
 
@@ -124,8 +127,35 @@ class QRScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
                 }
             }
         }
-        
+        navigateBack(qrParams: parameters)
         return parameters
+    }
+    
+    func navigateBack(qrParams: QRCodeURLParameters) {
+        
+        if let sessionToken = SessionToken(value: qrParams.sessionToken) {
+            StorageProvider.store(sessionToken: sessionToken)
+        }
+        
+        let baseUrl = qrParams.env
+        let customer = qrParams.cu
+        let businessUnit = qrParams.bu
+        let source = qrParams.source
+        
+        let environment = Environment(
+            baseUrl: baseUrl ?? "",
+            customer: customer ?? "", // rdk here only if all are set up
+            businessUnit: businessUnit ?? ""
+        )
+        
+        StorageProvider.store(environment: environment)
+        
+        
+        let navigationController = MainNavigationController()
+        let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
+          as GCKUICastContainerViewController
+        castContainerVC.miniMediaControlsItemEnabled = true
+        UIApplication.shared.keyWindow?.rootViewController = castContainerVC
     }
 
 }

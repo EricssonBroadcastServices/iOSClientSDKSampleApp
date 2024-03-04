@@ -30,14 +30,14 @@ class EnvironmentViewController: UIViewController {
     
     let environmentUrlTextField: RBMTextField = {
         let textfield = RBMTextField(placeHolderText: "Exposure base URL")
-        textfield.text = "https://bsbu.enigmatv.io" // rdk remove
+        textfield.text = ""
         textfield.backgroundColor = ColorState.active.textFieldBackground
         return textfield
     }()
     
     let customerNameTextField: RBMTextField = {
         let textfield = RBMTextField(placeHolderText: NSLocalizedString("Customer Name", comment: ""))
-        textfield.text = "BSCU"
+        textfield.text = ""
         textfield.backgroundColor = ColorState.active.textFieldBackground
         return textfield
     }()
@@ -45,7 +45,7 @@ class EnvironmentViewController: UIViewController {
     let businessUnitTextField: RBMTextField = {
         let textfield = RBMTextField(placeHolderText: NSLocalizedString("Business Unit", comment: ""))
         textfield.backgroundColor = ColorState.active.textFieldBackground
-        textfield.text = "BSBU"
+        textfield.text = ""
         return textfield
     }()
     
