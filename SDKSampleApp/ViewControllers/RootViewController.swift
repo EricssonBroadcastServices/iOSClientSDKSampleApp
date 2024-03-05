@@ -8,7 +8,6 @@
 import Foundation
 import GoogleCast
 import iOSClientExposure
-import iOSClientExposurePlayback
 
 let kCastControlBarsAnimationDuration: TimeInterval = 0.20
 
