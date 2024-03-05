@@ -80,55 +80,7 @@ extension MainNavigationController {
 //            (alert: UIAlertAction!) -> Void in
 //        })
 //        
-//        Authenticate(environment: environment)
-//            .validate(sessionToken: SessionToken(value: sessionToken))
-//            .request()
-//            .validate()
-//            .response { [weak self] in
-//                
-//                if let error = $0.error {
-//                    print("RDK wrong session token")
-//                } else {
-//                    print("RDK OK session token")
-//                }
-//                
-//                if let error = $0.error {
-//                    
-//                    let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
-//                    self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert)
-//                } else {
-//                    if let credentials = $0.value {
-//                        
-//                        StorageProvider.store(environment: environment)
-//                        //                        StorageProvider.store(sessionToken: credentials.sessionToken)
-//                        
-//                                    guard
-//                                        let source = qrCodeData.urlParams?.source,
-//                                        qrCodeData.urlParams?.sessionToken != nil
-//                                    else {
-//                                        return
-//                                    }
-//                        
-//                                    let playerVC = PlayerViewController()
-//                        
-//                                    playerVC.environment = environment
-//                                    playerVC.sessionToken = StorageProvider.storedSessionToken
-//                        
-//                                    if qrCodeData.isSourceAssetURL,
-//                                    let sourceURL = URL(string: source) {
-//                                        playerVC.shouldPlayWithUrl = true
-//                                        playerVC.urlPlayable = URLPlayable(url: sourceURL)
-//                                        self?.viewControllers.append(playerVC)
-//                                    } else if playerVC.sessionToken != nil {
-//                                        playerVC.shouldPlayWithUrl = false
-//                                        playerVC.playable = AssetPlayable(assetId: source)
-//                                        self?.viewControllers.append(playerVC)
-//                                    }
-//                    }
-//                }
-//                
-//                
-//            }
+
         
             guard
                 let source = qrCodeData.urlParams?.source
@@ -144,8 +96,12 @@ extension MainNavigationController {
             playerVC.shouldPlayWithUrl = true
             playerVC.urlPlayable = URLPlayable(url: sourceURL)
             viewControllers.append(playerVC)
-        } else if playerVC.sessionToken != nil {
+        } else if let sessionToken = qrCodeData.urlParams?.sessionToken,
+                    let environment = StorageProvider.storedEnvironment {
             /// assetID
+            playerVC.sessionToken = SessionToken(value: sessionToken)
+        
+            
             playerVC.sessionToken = StorageProvider.storedSessionToken
             playerVC.environment = environment // rdk is it obligatory?
             playerVC.shouldPlayWithUrl = false
