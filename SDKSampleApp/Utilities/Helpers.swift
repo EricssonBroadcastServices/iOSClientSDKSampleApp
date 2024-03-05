@@ -1,7 +1,10 @@
 import GoogleCast
 
-func reloadAppNavigation() {
+func reloadAppNavigation(
+    qrParams: QRCodeURLParameters? = nil
+) {
     let navigationController = MainNavigationController()
+    navigationController.qrCodeData = .init(urlParams: qrParams)
     let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
     as GCKUICastContainerViewController
     castContainerVC.miniMediaControlsItemEnabled = true

@@ -122,54 +122,45 @@ extension QRScannerViewModel {
     }
     
     private func navigateWithQRParams(qrParams: QRCodeURLParameters) {
-        
-        let baseUrl = qrParams.env
-        let customer = qrParams.cu
-        let businessUnit = qrParams.bu
+ 
+        guard
+            let baseUrl = qrParams.env,
+            let customer = qrParams.cu,
+            let businessUnit = qrParams.bu
+        else {
+            /// 1. Try to fill any Env fields if available
+            if [qrParams.env, qrParams.cu, qrParams.bu].contains(where: { $0 != nil }) {
+                StorageProvider.store(
+                    environment: Environment(
+                        baseUrl: qrParams.env ?? "",
+                        customer: qrParams.cu ?? "",
+                        businessUnit: qrParams.bu ?? ""
+                    )
+                )
+            }
+            reloadAppNavigation(qrParams: qrParams)
+            return
+        }
         let source = qrParams.source
         
         let environment = Environment(
-            baseUrl: baseUrl ?? "",
-            customer: customer ?? "",
-            businessUnit: businessUnit ?? ""
+            baseUrl: baseUrl,
+            customer: customer,
+            businessUnit: businessUnit
         )
-        StorageProvider.store(environment: environment)
         
-        // 1. try anonymous login
-        
-        if let baseUrl, let customer, let businessUnit {
-            Authenticate(environment: environment)
-                .anonymous()
-                .request()
-                .validate()
-                .response { [weak self, environment] in
-                    
-                    if let error = $0.error {
-                        
-                        let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
-//                        self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert) // rdk show this alert
-                        
-                        print("rdk \(message)")
-                    }
-                    
-                    if let credentials = $0.value {
-                        
-                        StorageProvider.store(environment: environment)
-                        StorageProvider.store(sessionToken: credentials.sessionToken)
-                        
-//                        reloadAppNavigation()
-                                let navigationController = MainNavigationController()
-                                navigationController.qrCodeData = .init(urlParams: qrParams)
-                                let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-                                as GCKUICastContainerViewController
-                                castContainerVC.miniMediaControlsItemEnabled = true
-                                if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
-                                    mainWindow.rootViewController = castContainerVC
-                                }
-                        return
-                    }
-                }
+            
+        if let sessionToken = SessionToken(value: qrParams.sessionToken) {
+            
+        } else {
+            /// 2. Try to login anonymously if Env data available and no session token
+            anonymousLogin(
+                qrParams: qrParams,
+                environment: environment
+            )
         }
+            
+            
         
         return
         
@@ -211,5 +202,32 @@ extension QRScannerViewModel {
 //            mainWindow.rootViewController = castContainerVC
 //        }
         
+    }
+    
+    private func anonymousLogin(
+        qrParams: QRCodeURLParameters,
+        environment: Environment
+    ) {
+        Authenticate(environment: environment)
+            .anonymous()
+            .request()
+            .validate()
+            .response {
+                if let error = $0.error {
+                    
+                    let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
+                    //                        self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert) // rdk show this alert
+                    
+                    print("rdk \(message)")
+                } else if let credentials = $0.value {
+                    
+                    StorageProvider.store(environment: environment)
+                    StorageProvider.store(sessionToken: credentials.sessionToken)
+                    
+                    reloadAppNavigation(qrParams: qrParams)
+                    return
+                }
+                
+            }
     }
 }

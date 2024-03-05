@@ -62,31 +62,19 @@ class MainNavigationController: UINavigationController {
 extension MainNavigationController {
     
     func tryPlayingAssetIfPossible() {
-        guard
-            let environment = StorageProvider.storedEnvironment
-        else {
-            return
-        }
-
-    if let qrCodeData, qrCodeData.isContentAssetAvailable {
+        if let qrCodeData, qrCodeData.isContentAssetAvailable {
             showPlayerController(
                 qrCodeData: qrCodeData,
-                environment: environment
+                environment: StorageProvider.storedEnvironment
             )
         }
     }
     
     private func showPlayerController(
         qrCodeData: QRCodeData,
-        environment: Environment
+        environment: Environment?
     ) {
         print("rdk showPlayerController")
-        guard
-            let source = qrCodeData.urlParams?.source
-//            let sessionToken = qrCodeData.urlParams?.sessionToken
-        else {
-            return
-        }
         
 //        let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
 //            (alert: UIAlertAction!) -> Void in
@@ -142,31 +130,29 @@ extension MainNavigationController {
 //                
 //            }
         
-//        Task {
             guard
                 let source = qrCodeData.urlParams?.source
-//                qrCodeData.urlParams?.sessionToken != nil
             else {
                 return
             }
             
             let playerVC = PlayerViewController()
             
-            playerVC.environment = environment
+        if qrCodeData.isSourceAssetURL,
+           let sourceURL = URL(string: source) {
+            /// assetURL
+            playerVC.shouldPlayWithUrl = true
+            playerVC.urlPlayable = URLPlayable(url: sourceURL)
+            viewControllers.append(playerVC)
+        } else if playerVC.sessionToken != nil {
+            /// assetID
             playerVC.sessionToken = StorageProvider.storedSessionToken
-            
-            if qrCodeData.isSourceAssetURL,
-            let sourceURL = URL(string: source) {
-                playerVC.shouldPlayWithUrl = true
-                playerVC.urlPlayable = URLPlayable(url: sourceURL)
-                viewControllers.append(playerVC)
-            } else if playerVC.sessionToken != nil {
-                playerVC.shouldPlayWithUrl = false
-                playerVC.playable = AssetPlayable(assetId: source)
-                viewControllers.append(playerVC)
-                print("rdk append VIDEO")
-            }
-//        }
+            playerVC.environment = environment // rdk is it obligatory?
+            playerVC.shouldPlayWithUrl = false
+            playerVC.playable = AssetPlayable(assetId: source)
+            viewControllers.append(playerVC)
+            print("rdk append VIDEO")
+        }
        
         
     }
