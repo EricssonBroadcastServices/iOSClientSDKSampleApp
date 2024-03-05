@@ -6,8 +6,7 @@ class QRScannerViewController: UIViewController {
     var viewModel: QRScannerViewModel
     
     public init(
-        viewModel: QRScannerViewModel,
-        isScanning: Bool = true
+        viewModel: QRScannerViewModel
     ) {
         self.viewModel = viewModel
         
@@ -42,7 +41,7 @@ class QRScannerViewController: UIViewController {
 
         viewModel.tryToStartSession()
         
-//        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewWillDisappear(_ animated: Bool) {

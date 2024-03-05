@@ -4,16 +4,6 @@ import UIKit
 struct QRCodeData {
     let urlParams: QRCodeURLParameters?
     
-    var isAllEnvData: Bool {
-        urlParams?.bu != nil
-        &&
-        urlParams?.cu != nil
-        &&
-        urlParams?.env != nil
-        &&
-        urlParams?.sessionToken == nil
-    }
-    
     var isContentAssetAvailable: Bool {
         urlParams?.source != nil
     }
