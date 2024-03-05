@@ -97,27 +97,25 @@ extension QRScannerViewModel {
     
     func extractURLParameters(from qrCodeData: String) -> QRCodeURLParameters {
         var parameters = QRCodeURLParameters()
-
-        let cleanedData = qrCodeData.replacingOccurrences(of: jsPlayerURL, with: "")
         
-        let parameterPairs = cleanedData.components(separatedBy: "&")
-        
-        for pair in parameterPairs {
-            let components = pair.components(separatedBy: "=")
-            if components.count == 2 {
-                if let key = components[0].removingPercentEncoding, let value = components[1].removingPercentEncoding {
-                    if let parameter = QRCodeParameter(rawValue: key) {
-                        switch parameter {
-                        case .env: parameters.env = value
-                        case .cu: parameters.cu = value
-                        case .bu: parameters.bu = value
-                        case .source: parameters.source = value
-                        case .sessionToken: parameters.sessionToken = value
+        if let url = URL(string: qrCodeData) {
+            if let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
+                for queryItem in queryItems {
+                    if let value = queryItem.value {
+                        if let parameter = QRCodeParameter(rawValue: queryItem.name) {
+                            switch parameter {
+                            case .env: parameters.env = value
+                            case .cu: parameters.cu = value
+                            case .bu: parameters.bu = value
+                            case .source: parameters.source = value
+                            case .sessionToken: parameters.sessionToken = value
+                            }
                         }
                     }
                 }
             }
         }
+        
         return parameters
     }
     

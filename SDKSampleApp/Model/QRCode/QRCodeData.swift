@@ -20,9 +20,9 @@ struct QRCodeData {
     private func isValidURL(
         _ urlString: String
     ) -> Bool {
-        if let url = URL(string: urlString) {
-            return UIApplication.shared.canOpenURL(url)
+        guard let url = URL(string: urlString) else {
+            return false
         }
-        return false
+        return UIApplication.shared.canOpenURL(url)
     }
 }

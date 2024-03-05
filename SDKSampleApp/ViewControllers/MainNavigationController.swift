@@ -47,9 +47,7 @@ extension MainNavigationController {
         qrCodeData: QRCodeData,
         environment: Environment?
     ) {
-        guard
-            let source = qrCodeData.urlParams?.source
-        else {
+        guard let source = qrCodeData.urlParams?.source else {
             return
         }
         

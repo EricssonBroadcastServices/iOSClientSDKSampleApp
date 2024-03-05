@@ -160,8 +160,8 @@ extension LoginViewController {
         guard
             let username = usernameTextField.text,
             let password = passwordTextField.text,
-            username != "",
-            password != ""
+            !username.isEmpty,
+            !password.isEmpty
         else {
             self.popupAlert(title:NSLocalizedString("Sorry", comment: "") , message: NSLocalizedString("Please fill all fields", comment: ""), actions: [okAction], preferedStyle: .alert)
             
