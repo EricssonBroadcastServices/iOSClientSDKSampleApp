@@ -188,7 +188,6 @@ extension RootViewController {
                         
                         StorageProvider.store(environment: nil)
                         StorageProvider.store(sessionToken: nil)
-                        
                         reloadAppNavigation()
                     })
                     
@@ -202,42 +201,6 @@ extension RootViewController {
                     reloadAppNavigation()
                 }
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-//        handlePlay()
-    }
-    
-    func handlePlay() {
-        
-        let assetId: String = "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E"
-        
-        let destinationViewController = PlayerViewController()
-        
-        destinationViewController.environment = StorageProvider.storedEnvironment
-        destinationViewController.sessionToken = StorageProvider.storedSessionToken
-
-        let properties = PlaybackProperties(autoplay: true,
-                                            playFrom: .bookmark)
-        
-        destinationViewController.playbackProperties = properties
-        destinationViewController.playable = AssetPlayable(assetId: "b74e3719-3ef0-481a-8014-40fa7cea2402_82162E")
-//        let navigationController = MainNavigationController()
-        
-        let cos = UIApplication.shared.windows.first?.rootViewController?.navigationController
-        cos?.navigationController?.pushViewController(destinationViewController, animated: true)
-        
-//        let selectionlistViewController = SelectionTableViewController()
-        
-//        self.add(asChildViewController: destinationViewController)
-        
-//        let loginViewController = LoginViewController()
-//
-//        guard let cos = StorageProvider.storedEnvironment else {
-//            return
-//        }
-//
-//        self.navigationController?.pushViewController(loginViewController, animated: true)
     }
     
 }
