@@ -53,7 +53,6 @@ class QRScannerViewController: UIViewController {
 }
 
 // MARK: - private functions
-
 extension QRScannerViewController {
     
     private func createRectOfInterest() -> CGRect {
