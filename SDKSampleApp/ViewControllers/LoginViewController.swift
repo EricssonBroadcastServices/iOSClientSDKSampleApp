@@ -184,13 +184,7 @@ extension LoginViewController {
                     StorageProvider.store(environment: self?.environment)
                     StorageProvider.store(sessionToken: credentials.sessionToken)
                     
-//                    reloadAppNavigation()
-                    let navigationController = MainNavigationController()
-                    let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-                      as GCKUICastContainerViewController
-                    castContainerVC.miniMediaControlsItemEnabled = true
-                    UIApplication.shared.keyWindow?.rootViewController = castContainerVC
-
+                    reloadAppNavigation()
                 }
         }
     }

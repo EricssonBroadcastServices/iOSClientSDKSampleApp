@@ -175,14 +175,18 @@ extension QRScannerViewModel {
             .request()
             .validate()
             .response {
+                var errorModel: ErrorModel? = nil
                 if let error = $0.error {
-                    let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
-                    //                        self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert)
+                    errorModel = ErrorModel(error: error)
                 } else if $0.value != nil {
                     StorageProvider.store(environment: environment)
                     StorageProvider.store(sessionToken: sessionToken)
                 }
-                reloadAppNavigation(qrParams: qrParams)
+                
+                reloadAppNavigation(
+                    qrParams: qrParams,
+                    error: errorModel
+                )
             }
     }
     
@@ -195,15 +199,17 @@ extension QRScannerViewModel {
             .request()
             .validate()
             .response {
+                var errorModel: ErrorModel? = nil
                 if let error = $0.error {
-                    
-                    let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
-                    //                        self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert) // rdk show this alert
+                    errorModel = ErrorModel(error: error)
                 } else if let credentials = $0.value {
                     StorageProvider.store(environment: environment)
                     StorageProvider.store(sessionToken: credentials.sessionToken)
                 }
-                reloadAppNavigation(qrParams: qrParams)
+                reloadAppNavigation(
+                    qrParams: qrParams,
+                    error: errorModel
+                )
             }
     }
 }
