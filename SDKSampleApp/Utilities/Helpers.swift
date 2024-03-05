@@ -11,6 +11,4 @@ func reloadAppNavigation(
     if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
         mainWindow.rootViewController = castContainerVC
     }
-    
-    print("rdk call")
 }

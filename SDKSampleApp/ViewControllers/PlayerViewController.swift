@@ -123,7 +123,7 @@ class PlayerViewController: UIViewController, GCKRemoteMediaClientListener, AVPi
         if shouldPlayWithUrl {
             setupURLPlayablePlayer()
         } else {
-            setupPlayer(environment, sessionToken) // rdk here session token crashes
+            setupPlayer(environment, sessionToken)
         }
         
         self.enableAudioSeesionForPlayer()
@@ -696,7 +696,7 @@ extension PlayerViewController {
     ///
     /// - Parameter sender: pausePlayButton
     @objc fileprivate func actionPausePlay(_ sender: UIButton) {
-        if player.isPlaying { // rdk here crash while trying to pause on URL content
+        if player.isPlaying {
             player.pause()
         }
         else {

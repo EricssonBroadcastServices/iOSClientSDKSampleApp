@@ -4,7 +4,7 @@ import UIKit
 struct QRCodeData {
     let urlParams: QRCodeURLParameters?
     
-    var isAnonymousLoginPossible: Bool {
+    var isAllEnvData: Bool {
         urlParams?.bu != nil
         &&
         urlParams?.cu != nil

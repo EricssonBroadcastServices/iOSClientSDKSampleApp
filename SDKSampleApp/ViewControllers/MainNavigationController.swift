@@ -12,44 +12,17 @@ import iOSClientExposurePlayback
 
 /// Handles the main navigation in the app
 class MainNavigationController: UINavigationController {
-
+    
     var qrCodeData: QRCodeData?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         if StorageProvider.storedSessionToken != nil {
-            print("rdk showRootController")
-//            showRootController()
-            let rootVC = RootViewController()
-            viewControllers = [rootVC]
+            viewControllers = [RootViewController()]
         } else {
-            print("rdk showEnvironmentController")
-//            showEnvironmentController()
-            let environmentViewController = EnvironmentViewController()
-            viewControllers = [environmentViewController]
+            viewControllers = [EnvironmentViewController()]
         }
         tryPlayingAssetIfPossible()
-    }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        tryPlayingAssetIfPossible()
-//    }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        tryPlayingAssetIfPossible()
-//    }
-    
-    /// Show Root (main) view if user not logged in
-    private func showRootController() {
-        let vc = RootViewController()
-        viewControllers = [vc]
-    }
-    
-    /// Show Enviornment view if user not logged in
-    private func showEnvironmentController() {
-        let vc = EnvironmentViewController()
-//        vc.tryAutoLogIn = qrCodeData?.isAnonymousLoginPossible ?? false // rdk
-        viewControllers = [vc]
     }
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
@@ -74,42 +47,29 @@ extension MainNavigationController {
         qrCodeData: QRCodeData,
         environment: Environment?
     ) {
-        print("rdk showPlayerController")
+        guard
+            let source = qrCodeData.urlParams?.source
+        else {
+            return
+        }
         
-//        let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
-//            (alert: UIAlertAction!) -> Void in
-//        })
-//        
-
+        let playerVC = PlayerViewController()
         
-            guard
-                let source = qrCodeData.urlParams?.source
-            else {
-                return
-            }
-            
-            let playerVC = PlayerViewController()
-            
         if qrCodeData.isSourceAssetURL,
            let sourceURL = URL(string: source) {
             /// assetURL
             playerVC.shouldPlayWithUrl = true
             playerVC.urlPlayable = URLPlayable(url: sourceURL)
             viewControllers.append(playerVC)
-        } else if let sessionToken = qrCodeData.urlParams?.sessionToken,
-                    let environment = StorageProvider.storedEnvironment {
+        } else if let sessionToken = StorageProvider.storedSessionToken,
+                  let environment = StorageProvider.storedEnvironment {
             /// assetID
-            playerVC.sessionToken = SessionToken(value: sessionToken)
-        
-            
-            playerVC.sessionToken = StorageProvider.storedSessionToken
-            playerVC.environment = environment // rdk is it obligatory?
+            playerVC.sessionToken = sessionToken
+            playerVC.environment = environment
             playerVC.shouldPlayWithUrl = false
             playerVC.playable = AssetPlayable(assetId: source)
             viewControllers.append(playerVC)
-            print("rdk append VIDEO")
         }
-       
         
     }
 }
