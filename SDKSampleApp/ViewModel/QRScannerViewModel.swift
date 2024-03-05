@@ -97,14 +97,11 @@ extension QRScannerViewModel {
     
     func extractURLParameters(from qrCodeData: String) -> QRCodeURLParameters {
         var parameters = QRCodeURLParameters()
-        print(qrCodeData)
-        // Remove the leading prefix if present
+
         let cleanedData = qrCodeData.replacingOccurrences(of: jsPlayerURL, with: "")
         
-        // Split the string by "&" to get individual parameters
         let parameterPairs = cleanedData.components(separatedBy: "&")
         
-        // Iterate over parameter pairs and extract key-value pairs
         for pair in parameterPairs {
             let components = pair.components(separatedBy: "=")
             if components.count == 2 {
@@ -138,43 +135,81 @@ extension QRScannerViewModel {
         )
         StorageProvider.store(environment: environment)
         
-        if let sessionToken = SessionToken(value: qrParams.sessionToken) {
-            StorageProvider.store(sessionToken: sessionToken)
-            
-            let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
-                (alert: UIAlertAction!) -> Void in
-            })
-            
-//            Authenticate(environment: environment)
-//                .validate(sessionToken: sessionToken)
-//                .request()
-//                .validate()
-//                .response {
-//                    
-//                    if let error = $0.error {
-//                        print("RDK wrong session token")
-//                    } else {
-//                        print("RDK OK session token")
-//                    }
-//                    
-//                    if let credentials = $0.value {
-//                        
-//                        StorageProvider.store(environment: environment)
-////                        StorageProvider.store(sessionToken: credentials.sessionToken)
-//                        
+        // 1. try anonymous login
+        
+        if let baseUrl, let customer, let businessUnit {
+            Authenticate(environment: environment)
+                .anonymous()
+                .request()
+                .validate()
+                .response { [weak self, environment] in
+                    
+                    if let error = $0.error {
+                        
+                        let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
+//                        self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert) // rdk show this alert
+                        
+                        print("rdk \(message)")
+                    }
+                    
+                    if let credentials = $0.value {
+                        
+                        StorageProvider.store(environment: environment)
+                        StorageProvider.store(sessionToken: credentials.sessionToken)
+                        
 //                        reloadAppNavigation()
-//                    }
-//                }
+                                let navigationController = MainNavigationController()
+                                navigationController.qrCodeData = .init(urlParams: qrParams)
+                                let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
+                                as GCKUICastContainerViewController
+                                castContainerVC.miniMediaControlsItemEnabled = true
+                                if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                                    mainWindow.rootViewController = castContainerVC
+                                }
+                        return
+                    }
+                }
         }
         
-        let navigationController = MainNavigationController()
-        navigationController.qrCodeData = .init(urlParams: qrParams)
-        let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
-        as GCKUICastContainerViewController
-        castContainerVC.miniMediaControlsItemEnabled = true
-        if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
-            mainWindow.rootViewController = castContainerVC
-        }
+        return
+        
+//        if let sessionToken = SessionToken(value: qrParams.sessionToken) {
+//            StorageProvider.store(sessionToken: sessionToken)
+//            
+//            let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
+//                (alert: UIAlertAction!) -> Void in
+//            })
+//            
+////            Authenticate(environment: environment)
+////                .validate(sessionToken: sessionToken)
+////                .request()
+////                .validate()
+////                .response {
+////                    
+////                    if let error = $0.error {
+////                        print("RDK wrong session token")
+////                    } else {
+////                        print("RDK OK session token")
+////                    }
+////                    
+////                    if let credentials = $0.value {
+////                        
+////                        StorageProvider.store(environment: environment)
+//////                        StorageProvider.store(sessionToken: credentials.sessionToken)
+////                        
+////                        reloadAppNavigation()
+////                    }
+////                }
+//        }
+        
+//        let navigationController = MainNavigationController()
+//        navigationController.qrCodeData = .init(urlParams: qrParams)
+//        let castContainerVC = GCKCastContext.sharedInstance().createCastContainerController(for: navigationController)
+//        as GCKUICastContainerViewController
+//        castContainerVC.miniMediaControlsItemEnabled = true
+//        if let mainWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+//            mainWindow.rootViewController = castContainerVC
+//        }
         
     }
 }

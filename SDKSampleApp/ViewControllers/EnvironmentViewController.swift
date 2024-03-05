@@ -96,6 +96,7 @@ class EnvironmentViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         if tryAutoLogIn {
             anonymousLogin()
+            print("rdk anonymlous in environmentVC")
         }
         
     }
@@ -210,7 +211,7 @@ extension EnvironmentViewController {
 extension EnvironmentViewController {
     /// Authenticate the user with Authentication Endpoint
     @objc fileprivate func anonymousLogin() {
-        
+        print("rdk inside anonymousLogin")
         view.endEditing(true)
         
         guard

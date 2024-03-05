@@ -18,15 +18,26 @@ class MainNavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if StorageProvider.storedSessionToken != nil {
-            showRootController()
+            print("rdk showRootController")
+//            showRootController()
+            let rootVC = RootViewController()
+            viewControllers = [rootVC]
         } else {
-            showEnvironmentController()
+            print("rdk showEnvironmentController")
+//            showEnvironmentController()
+            let environmentViewController = EnvironmentViewController()
+            viewControllers = [environmentViewController]
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
         tryPlayingAssetIfPossible()
     }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        tryPlayingAssetIfPossible()
+//    }
+    
+//    override func viewDidAppear(_ animated: Bool) {
+//        tryPlayingAssetIfPossible()
+//    }
     
     /// Show Root (main) view if user not logged in
     private func showRootController() {
@@ -69,28 +80,94 @@ extension MainNavigationController {
         qrCodeData: QRCodeData,
         environment: Environment
     ) {
+        print("rdk showPlayerController")
         guard
-            let source = qrCodeData.urlParams?.source,
-            qrCodeData.urlParams?.sessionToken != nil
+            let source = qrCodeData.urlParams?.source
+//            let sessionToken = qrCodeData.urlParams?.sessionToken
         else {
             return
         }
         
-        let playerVC = PlayerViewController()
+//        let okAction = UIAlertAction(title: NSLocalizedString("Ok", comment: ""), style: .cancel, handler: {
+//            (alert: UIAlertAction!) -> Void in
+//        })
+//        
+//        Authenticate(environment: environment)
+//            .validate(sessionToken: SessionToken(value: sessionToken))
+//            .request()
+//            .validate()
+//            .response { [weak self] in
+//                
+//                if let error = $0.error {
+//                    print("RDK wrong session token")
+//                } else {
+//                    print("RDK OK session token")
+//                }
+//                
+//                if let error = $0.error {
+//                    
+//                    let message = "\(error.code) " + error.message + "\n" + (error.info ?? "")
+//                    self?.popupAlert(title: error.domain , message: message, actions: [okAction], preferedStyle: .alert)
+//                } else {
+//                    if let credentials = $0.value {
+//                        
+//                        StorageProvider.store(environment: environment)
+//                        //                        StorageProvider.store(sessionToken: credentials.sessionToken)
+//                        
+//                                    guard
+//                                        let source = qrCodeData.urlParams?.source,
+//                                        qrCodeData.urlParams?.sessionToken != nil
+//                                    else {
+//                                        return
+//                                    }
+//                        
+//                                    let playerVC = PlayerViewController()
+//                        
+//                                    playerVC.environment = environment
+//                                    playerVC.sessionToken = StorageProvider.storedSessionToken
+//                        
+//                                    if qrCodeData.isSourceAssetURL,
+//                                    let sourceURL = URL(string: source) {
+//                                        playerVC.shouldPlayWithUrl = true
+//                                        playerVC.urlPlayable = URLPlayable(url: sourceURL)
+//                                        self?.viewControllers.append(playerVC)
+//                                    } else if playerVC.sessionToken != nil {
+//                                        playerVC.shouldPlayWithUrl = false
+//                                        playerVC.playable = AssetPlayable(assetId: source)
+//                                        self?.viewControllers.append(playerVC)
+//                                    }
+//                    }
+//                }
+//                
+//                
+//            }
         
-        playerVC.environment = environment
-        playerVC.sessionToken = StorageProvider.storedSessionToken
-        
-        if qrCodeData.isSourceAssetURL,
-        let sourceURL = URL(string: source) {
-            playerVC.shouldPlayWithUrl = true
-            playerVC.urlPlayable = URLPlayable(url: sourceURL)
-            viewControllers.append(playerVC)
-        } else if playerVC.sessionToken != nil {
-            playerVC.shouldPlayWithUrl = false
-            playerVC.playable = AssetPlayable(assetId: source)
-            viewControllers.append(playerVC)
-        }
+//        Task {
+            guard
+                let source = qrCodeData.urlParams?.source
+//                qrCodeData.urlParams?.sessionToken != nil
+            else {
+                return
+            }
+            
+            let playerVC = PlayerViewController()
+            
+            playerVC.environment = environment
+            playerVC.sessionToken = StorageProvider.storedSessionToken
+            
+            if qrCodeData.isSourceAssetURL,
+            let sourceURL = URL(string: source) {
+                playerVC.shouldPlayWithUrl = true
+                playerVC.urlPlayable = URLPlayable(url: sourceURL)
+                viewControllers.append(playerVC)
+            } else if playerVC.sessionToken != nil {
+                playerVC.shouldPlayWithUrl = false
+                playerVC.playable = AssetPlayable(assetId: source)
+                viewControllers.append(playerVC)
+                print("rdk append VIDEO")
+            }
+//        }
+       
         
     }
 }

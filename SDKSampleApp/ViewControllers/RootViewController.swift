@@ -205,7 +205,7 @@ extension RootViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        handlePlay()
+//        handlePlay()
     }
     
     func handlePlay() {

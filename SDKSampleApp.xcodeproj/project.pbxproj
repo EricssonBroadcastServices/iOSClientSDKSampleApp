@@ -1181,7 +1181,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 18;
-				DEVELOPMENT_TEAM = VR5R3A8UNS;
+				DEVELOPMENT_TEAM = KU82LMQ3LB;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1200,7 +1200,7 @@
 					"$(inherited)",
 				);
 				OTHER_LIBTOOLFLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleAppRdk;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleAppRdk2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -1217,7 +1217,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 18;
-				DEVELOPMENT_TEAM = VR5R3A8UNS;
+				DEVELOPMENT_TEAM = KU82LMQ3LB;
 				EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE = NO;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1235,7 +1235,7 @@
 					"$(inherited)",
 				);
 				OTHER_LIBTOOLFLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleAppRdk;
+				PRODUCT_BUNDLE_IDENTIFIER = com.emp.ExposurePlayback.SampleAppRdk2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

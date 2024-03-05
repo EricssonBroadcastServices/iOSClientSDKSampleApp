@@ -42,7 +42,7 @@ class QRScannerViewController: UIViewController {
 
         viewModel.tryToStartSession()
         
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
+//        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
