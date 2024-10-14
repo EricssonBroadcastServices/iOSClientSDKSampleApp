@@ -1,4 +1,5 @@
 {
+  "originHash" : "98b7b84895740e97761f1aaf7edf2f207904098e0c56021a1d3248dc01609940",
   "pins" : [
     {
       "identity" : "iosclientcast",
@@ -6,7 +7,7 @@
       "location" : "https://github.com/EricssonBroadcastServices/iOSClientCast.git",
       "state" : {
         "branch" : "master",
-        "revision" : "d1760c1e7c981be47c6b2081145d711e3773fe54"
+        "revision" : "4c50273121216a56e8c220baac363ecbdbab8ccf"
       }
     },
     {
@@ -14,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/EricssonBroadcastServices/iOSClientDownload",
       "state" : {
-        "revision" : "b25f6d1ae6b58d6a95d8fc02b90e1dc8ccb32de1",
-        "version" : "3.0.300"
+        "revision" : "565534233e9818a23817dfcb5a06c7218730c1a6",
+        "version" : "3.1.0"
       }
     },
     {
@@ -23,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/EricssonBroadcastServices/iOSClientExposure",
       "state" : {
-        "revision" : "d0b7e98b2f1f8b1cdb6bf2fd58d962ce1cab5b91",
-        "version" : "3.7.0"
+        "revision" : "291d8ed9c87c20588a7a6ac01489a961ea6447e0",
+        "version" : "3.8.0"
       }
     },
     {
@@ -50,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/EricssonBroadcastServices/iOSClientPlayer",
       "state" : {
-        "revision" : "7541cc17987cf39a7d42f4602a702d93d1524995",
-        "version" : "3.5.0"
+        "revision" : "713761df527cf295994d9164fc7bc3549b5f5328",
+        "version" : "3.6.1"
       }
     },
     {
@@ -91,5 +92,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
